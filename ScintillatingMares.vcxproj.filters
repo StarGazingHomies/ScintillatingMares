@@ -19,6 +19,12 @@
     <Filter Include="Source Files\Keyboard">
       <UniqueIdentifier>{c360978c-7c06-41c6-b13a-0c11fe780744}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Mouse">
+      <UniqueIdentifier>{78f1b203-a98c-419e-b239-870223b1cddd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mouse">
+      <UniqueIdentifier>{5b597fd4-e0c7-4880-be56-f45d5e084037}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -45,6 +51,12 @@
     <ClInclude Include="KeyboardClass.h">
       <Filter>Header Files\Keyboard</Filter>
     </ClInclude>
+    <ClInclude Include="MouseClass.h">
+      <Filter>Header Files\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseEvent.h">
+      <Filter>Header Files\Mouse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -64,6 +76,12 @@
     </ClCompile>
     <ClCompile Include="KeyboardClass.cpp">
       <Filter>Source Files\Keyboard</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseClass.cpp">
+      <Filter>Source Files\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseEvent.cpp">
+      <Filter>Source Files\Mouse</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

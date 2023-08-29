@@ -29,14 +29,38 @@ unsigned char KeyboardClass::readChar() {
 	this->charBuffer.pop();
 	return event;
 }
-void KeyboardClass::onKeyPressed(const unsigned char key) {
+void KeyboardClass::onKeyPressed(const unsigned char key, LPARAM lparam) {
 	this->keyStates[key] = true;
-	this->keyBuffer.push(KeyboardEvent(KeyboardEvent::EventType::PRESS, key));
+	this->keyBuffer.push(KeyboardEvent(KeyboardEvent::EventType::PRESS, key, lparam));
 }
-void KeyboardClass::onKeyReleased(const unsigned char key) {
+void KeyboardClass::onKeyReleased(const unsigned char key, LPARAM lparam) {
 	this->keyStates[key] = false;
-	this->keyBuffer.push(KeyboardEvent(KeyboardEvent::EventType::RELEASE, key));
+	this->keyBuffer.push(KeyboardEvent(KeyboardEvent::EventType::RELEASE, key, lparam));
 }
 void KeyboardClass::onChar(const unsigned char key) {
 	this->charBuffer.push(key);
+}
+
+void KeyboardClass::enableAutoRepeatKeys() {
+	this->autoRepeatKeys = true;
+}
+
+void KeyboardClass::disableAutoRepeatKeys() {
+	this->autoRepeatKeys = false;
+}
+
+void KeyboardClass::enableAutoRepeatChars() {
+	this->autoRepeatChars = true;
+}
+
+void KeyboardClass::disableAutoRepeatChars() {
+	this->autoRepeatChars = false;
+}
+
+bool KeyboardClass::isKeysAutoRepeat() {
+	return this->autoRepeatKeys;
+}
+
+bool KeyboardClass::isCharsAutoRepeat() {
+	return this->autoRepeatChars;
 }

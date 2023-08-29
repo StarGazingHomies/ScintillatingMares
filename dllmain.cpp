@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Logger.h"
 #include "KeyboardClass.h"
+#include "MouseClass.h"
 #include <Windows.h>
 #include <string>
 #include <Windows.h>
@@ -35,7 +36,6 @@ ID3D11PixelShader* pPixelShader = nullptr;
 ID3D11Buffer* pVertexBuffer = nullptr;
 ID3D11Buffer* pIndexBuffer = nullptr;
 ID3D11Buffer* pConstantBuffer = nullptr;
-KeyboardClass kb = KeyboardClass();
 
 // Changing this to an array of viewports
 #define MAINVP 0
@@ -377,8 +377,17 @@ void CleanupD3D()
 	safe_release(pVertexLayout);
 }
 
+KeyboardClass keyboard = KeyboardClass();
+MouseClass mouse = MouseClass();
 void Render()
 {
+	// Make sure input works!
+	
+	while (!keyboard.keyBufferIsEmpty()) {
+		KeyboardEvent event = keyboard.readKey();
+		printf("%ls\n", event.toString().c_str());
+	}
+
 	// Make sure our render target is set.
 	pContext->OMSetRenderTargets(1, &pRenderTargetView, nullptr);
 
@@ -448,25 +457,51 @@ void ReadFromMemory(DWORD addressToRead, float value) {
 }
 
 // Callback function
-#define MY_SUBCLASS_ID 1000
 WNDPROC OldWndProc;
 //LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
 LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	//printf("%c\n", static_cast<unsigned char>(wParam));
-	if (uMsg == WM_KEYDOWN) {
-		kb.onKeyPressed(uMsg);
+	switch (uMsg) {
+	case WM_KEYDOWN: {
+		unsigned char keycode = static_cast<unsigned char>(wParam);
+		if (keyboard.isKeysAutoRepeat())
+		{
+			keyboard.onKeyPressed(keycode, lParam);
+		}
+		else
+		{
+			const bool wasPressed = lParam & (1<<30);
+			if (!wasPressed)
+			{
+				keyboard.onKeyPressed(keycode, lParam);
+			}
+		}
 		return 0;
 	}
-	if (uMsg == WM_CHAR) {
-		kb.onChar(uMsg);
+	case WM_KEYUP: {
+		unsigned char keycode = static_cast<unsigned char>(wParam);
+		keyboard.onKeyReleased(keycode, lParam);
 		return 0;
 	}
-	//if (uMsg == WM_NCDESTROY) {
-		//RemoveWindowSubclass(hwnd, &NewWindowProc, uIdSubclass);
-	//}
-	//return DefWindowProc(hwnd, uMsg, wParam, lParam);
-	//return DefSubclassProc(hwnd, uMsg, wParam, lParam);
-	return OldWndProc(hwnd, uMsg, wParam, lParam);
+	case WM_CHAR:
+	{
+		unsigned char ch = static_cast<unsigned char>(wParam);
+		if (keyboard.isCharsAutoRepeat())
+		{
+			keyboard.onChar(ch);
+		}
+		else
+		{
+			const bool wasPressed = lParam & (1<<30);
+			if (!wasPressed)
+			{
+				keyboard.onChar(ch);
+			}
+		}
+		return 0;
+	}
+	default:
+		return OldWndProc(hwnd, uMsg, wParam, lParam);
+	}
 }
 
 DWORD WINAPI MainThread(LPVOID param) {
@@ -480,10 +515,10 @@ DWORD WINAPI MainThread(LPVOID param) {
 	if (result) {
 		printf("D3D successfully hooked.\n");
 		while (true) {
-			if (GetAsyncKeyState(VK_F6) & 0x80000) {
-				MessageBoxA(NULL, "F6 PRESSED!", "F6 PRESSED!", MB_OK);
-			}
-			if (GetAsyncKeyState(VK_F7) & 0x80000) {
+			//if (GetAsyncKeyState(VK_F6) & 0x80000) {
+			//	MessageBoxA(NULL, "F6 PRESSED!", "F6 PRESSED!", MB_OK);
+			//}
+			if (keyboard.keyIsPressed(VK_F7) & 0x80000) {
 				break;
 			}
 			Sleep(100);
@@ -520,14 +555,14 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		// Get the current window so we can subclass WndProc
 
 		HWND hWnd = FindWindow(NULL, TEXT("Legends of Equestria"));
-		Logger::Log("Window process handle: " + std::to_string((int)hWnd));
+		//Logger::Log("Window process handle: " + std::to_string((int)hWnd));
 		if (hWnd) {
 			//bool subclassResult = SetWindowSubclass(hWnd, &NewWindowProc, MY_SUBCLASS_ID, 0);
 			//Logger::Log("Window subclass result: " + std::to_string(subclassResult));
 			OldWndProc = (WNDPROC) SetWindowLongPtr(hWnd, -4, (LONG_PTR)NewWindowProc);
-			Logger::Log("Window subclass result: " + std::to_string((int)OldWndProc));
+			//Logger::Log("Window subclass result: " + std::to_string((int)OldWndProc));
 			DWORD err = GetLastError();
-			Logger::Log(err, "Subclass error");
+			//Logger::Log(err, "Subclass error");
 		}
 
         HANDLE hThread = CreateThread(0, 0, MainThread, hModule, 0, 0);
