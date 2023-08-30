@@ -25,6 +25,12 @@
     <Filter Include="Header Files\Mouse">
       <UniqueIdentifier>{5b597fd4-e0c7-4880-be56-f45d5e084037}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{5b75c344-f3ff-46fa-9d75-a57b6a57eaaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{434716e8-4391-459c-8325-ee170b61f16b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -57,6 +63,9 @@
     <ClInclude Include="MouseEvent.h">
       <Filter>Header Files\Mouse</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -82,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="MouseEvent.cpp">
       <Filter>Source Files\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

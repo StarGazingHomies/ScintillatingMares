@@ -16,8 +16,18 @@ public:
 	void onWheelDown(int x, int y);
 	void onMouseMove(int x, int y);
 
+	bool isLeftDown() const;
+	bool isMiddleDown() const;
+	bool isRightDown() const;
+
+	int getPosX() const;
+	int getPosY() const;
+	MousePoint getPos() const;
+
+	bool eventBufferIsEmpty() const;
 	MouseEvent readEvent();
 
+private:
 	std::queue<MouseEvent> eventBuffer;
 	bool leftIsDown = false;
 	bool rightIsDown = false;

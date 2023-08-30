@@ -382,9 +382,13 @@ MouseClass mouse = MouseClass();
 void Render()
 {
 	// Make sure input works!
-	
 	while (!keyboard.keyBufferIsEmpty()) {
 		KeyboardEvent event = keyboard.readKey();
+		printf("%ls\n", event.toString().c_str());
+	}
+
+	while (!mouse.eventBufferIsEmpty()) {
+		MouseEvent event = mouse.readEvent();
 		printf("%ls\n", event.toString().c_str());
 	}
 
@@ -413,7 +417,9 @@ void Render()
 	pContext->RSSetViewports(1, pViewports);
 
 	// Draw triangle
-	pContext->DrawIndexed(6, 0, 0);
+	if (keyboard.keyIsPressed(VK_F6)) {
+		pContext->DrawIndexed(6, 0, 0);
+	}
 }
 
 HRESULT __stdcall hkPresent(IDXGISwapChain* pThis, UINT SyncInterval, UINT Flags)
@@ -482,8 +488,7 @@ LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		keyboard.onKeyReleased(keycode, lParam);
 		return 0;
 	}
-	case WM_CHAR:
-	{
+	case WM_CHAR: {
 		unsigned char ch = static_cast<unsigned char>(wParam);
 		if (keyboard.isCharsAutoRepeat())
 		{
@@ -496,6 +501,60 @@ LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			{
 				keyboard.onChar(ch);
 			}
+		}
+		return 0;
+	}
+	case WM_MOUSEMOVE: {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.onMouseMove(x, y);
+		return 0;
+	}
+	case WM_LBUTTONDOWN: {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.onLeftPressed(x, y);
+		return 0;
+	}
+	case WM_LBUTTONUP: {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.onLeftReleased(x, y);
+		return 0;
+	}
+	case WM_RBUTTONDOWN: {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.onRightPressed(x, y);
+		return 0;
+	}
+	case WM_RBUTTONUP: {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.onRightReleased(x, y);
+		return 0;
+	}
+	case WM_MBUTTONDOWN: {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.onMiddlePressed(x, y);
+		return 0;
+	}
+	case WM_MBUTTONUP: {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.onMiddleReleased(x, y);
+		return 0;
+	}
+	case WM_MOUSEWHEEL: {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		short wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+		if (wheelDelta > 0) {
+			mouse.onWheelUp(x, y);
+		}
+		else {
+			mouse.onWheelDown(x, y);
 		}
 		return 0;
 	}

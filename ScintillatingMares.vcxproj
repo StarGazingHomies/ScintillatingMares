@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="D3D_VMT_Indices.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Graphics.h" />
     <ClInclude Include="KeyboardClass.h" />
     <ClInclude Include="KeyboardEvent.h" />
     <ClInclude Include="Logger.h" />
@@ -171,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="KeyboardClass.cpp" />
     <ClCompile Include="KeyboardEvent.cpp" />
     <ClCompile Include="Logger.cpp" />

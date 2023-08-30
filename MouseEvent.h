@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 struct MousePoint {
 	int x, y;
 };
@@ -20,11 +22,17 @@ public:
 		RAW_MOVE,
 		INVALID
 	};
-	EventType type;
-	int x;
-	int y;
 	MouseEvent();
 	MouseEvent(const EventType type, const int x, const int y);
+	bool isValid() const;
+	MouseEvent::EventType getType() const;
 	MousePoint getPos();
+	int getPosX() const;
+	int getPosY() const;
+	std::wstring toString() const;
+private:
+	MouseEvent::EventType type;
+	int x;
+	int y;
 };
 

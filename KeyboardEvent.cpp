@@ -12,29 +12,29 @@ KeyboardEvent::KeyboardEvent(const EventType type, const unsigned char key, cons
 	this->lparam = lparam;
 }
 
-bool KeyboardEvent::isPress() {
+bool KeyboardEvent::isPress() const {
 	return this->type == EventType::PRESS;
 }
 
-bool KeyboardEvent::isRelease() {
+bool KeyboardEvent::isRelease() const {
 	return this->type == EventType::RELEASE;
 }
 
-bool KeyboardEvent::isValid() {
+bool KeyboardEvent::isValid() const {
 	return this->type != EventType::INVALID;
 }
 
-unsigned char KeyboardEvent::getKeyCode() {
+unsigned char KeyboardEvent::getKeyCode() const {
 	return this->key;
 }
 
-std::wstring KeyboardEvent::getKeyName() {
+std::wstring KeyboardEvent::getKeyName() const {
 	WCHAR keyName[64];
 	GetKeyNameTextW(this->lparam, keyName, sizeof(keyName)/sizeof(wchar_t));
 	return std::wstring(keyName);
 }
 
-std::wstring KeyboardEvent::toString() {
+std::wstring KeyboardEvent::toString() const {
 	switch (this->type) {
 	case EventType::PRESS: {
 		std::wstring repr = L"Key ";

@@ -53,6 +53,30 @@ void MouseClass::onMouseMove(int x, int y) {
 	this->eventBuffer.push(event);
 }
 
+bool MouseClass::isLeftDown() const {
+	return this->leftIsDown;
+}
+bool MouseClass::isMiddleDown() const {
+	return this->middleIsDown;
+}
+bool MouseClass::isRightDown() const {
+	return this->rightIsDown;
+}
+
+int MouseClass::getPosX() const {
+	return this->x;
+}
+int MouseClass::getPosY() const {
+	return this->y;
+}
+MousePoint MouseClass::getPos() const {
+	return { this->x, this->y };
+}
+
+bool MouseClass::eventBufferIsEmpty() const {
+	return this->eventBuffer.empty();
+}
+
 MouseEvent MouseClass::readEvent() {
 	if (this->eventBuffer.empty()) {
 		return MouseEvent();

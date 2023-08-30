@@ -4,13 +4,13 @@
 KeyboardClass::KeyboardClass() {
 	memset(this->keyStates, false, sizeof(this->keyStates));
 }
-bool KeyboardClass::keyIsPressed(const unsigned char keyCode) {
+bool KeyboardClass::keyIsPressed(const unsigned char keyCode) const {
 	return this->keyStates[keyCode];
 }
-bool KeyboardClass::keyBufferIsEmpty() {
+bool KeyboardClass::keyBufferIsEmpty() const {
 	return this->keyBuffer.empty();
 }
-bool KeyboardClass::charBufferIsEmpty() {
+bool KeyboardClass::charBufferIsEmpty() const {
 	return this->charBuffer.empty();
 }
 KeyboardEvent KeyboardClass::readKey() {
@@ -57,10 +57,10 @@ void KeyboardClass::disableAutoRepeatChars() {
 	this->autoRepeatChars = false;
 }
 
-bool KeyboardClass::isKeysAutoRepeat() {
+bool KeyboardClass::isKeysAutoRepeat() const {
 	return this->autoRepeatKeys;
 }
 
-bool KeyboardClass::isCharsAutoRepeat() {
+bool KeyboardClass::isCharsAutoRepeat() const {
 	return this->autoRepeatChars;
 }
