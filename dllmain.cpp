@@ -2,8 +2,9 @@
 #include "Logger.h"
 #include "KeyboardClass.h"
 #include "MouseClass.h"
-#include <Windows.h>
+#include "Graphics.h"
 #include <string>
+#include <filesystem>
 #include <Windows.h>
 #include <WinUser.h>
 #include <d3d11.h>
@@ -26,16 +27,18 @@
 // d3d11 related object ptrs
 using namespace DirectX;
 
-ID3D11Device* pDevice = nullptr;
-IDXGISwapChain* pSwapchain = nullptr;
-ID3D11DeviceContext* pContext = nullptr;
-ID3D11RenderTargetView* pRenderTargetView = nullptr;
+Graphics graphics;
 ID3D11VertexShader* pVertexShader = nullptr;
 ID3D11InputLayout* pVertexLayout = nullptr;
 ID3D11PixelShader* pPixelShader = nullptr;
 ID3D11Buffer* pVertexBuffer = nullptr;
 ID3D11Buffer* pIndexBuffer = nullptr;
 ID3D11Buffer* pConstantBuffer = nullptr;
+
+ID3D11Device* pDevice = nullptr;
+IDXGISwapChain* pSwapchain = nullptr;
+ID3D11DeviceContext* pContext = nullptr;
+ID3D11RenderTargetView* pRenderTargetView = nullptr;
 
 // Changing this to an array of viewports
 #define MAINVP 0
@@ -68,11 +71,6 @@ bool InitD3DHook(IDXGISwapChain* pSwapchain);
 void CleanupD3D();
 void Render();
 
-struct HandleData
-{
-	DWORD pid;
-	HWND hWnd;
-};
 HWND FindMainWindow(DWORD dwPID);
 BOOL CALLBACK EnumWindowsCallback(HWND hWnd, LPARAM lParam);
 
@@ -181,11 +179,10 @@ bool HookD3D()
 	return Hook(ogPresent, pTrampoline, PRESENT_STUB_SIZE);
 }
 
-bool CompileShader(const char* szShader, const char* szEntrypoint, const char* szTarget, ID3D10Blob** pBlob)
-{
+bool CompileShader(const char* szShader, const char* szEntrypoint, const char* szTarget, ID3D10Blob** pBlob) {
 	ID3D10Blob* pErrorBlob = nullptr;
 
-	auto hr = D3DCompile(szShader, strlen(szShader), 0, nullptr, nullptr, szEntrypoint, szTarget, D3DCOMPILE_ENABLE_STRICTNESS, 0, pBlob, &pErrorBlob);
+	HRESULT hr = D3DCompile(szShader, strlen(szShader), 0, nullptr, nullptr, szEntrypoint, szTarget, D3DCOMPILE_ENABLE_STRICTNESS, 0, pBlob, &pErrorBlob);
 	if (FAILED(hr))
 	{
 		if (pErrorBlob)
@@ -201,168 +198,146 @@ bool CompileShader(const char* szShader, const char* szEntrypoint, const char* s
 
 
 // Direct3D Init Function
-bool InitD3DHook(IDXGISwapChain* pSwapchain)
-{
+bool InitD3DHook(IDXGISwapChain* pSwapchain) {
+	// Print the cwd
+	std::filesystem::path cwd = std::filesystem::current_path();
+	printf("Current path: %s\n", cwd.string().c_str());
+	// Well, fuck. The system uses the path at LoE!
 
-	HRESULT hr = pSwapchain->GetDevice(__uuidof(ID3D11Device), (void**)&pDevice);
-	if (FAILED(hr))
-		return false;
+	graphics.Initialize(pSwapchain);
 
-	pDevice->GetImmediateContext(&pContext);
-	pContext->OMGetRenderTargets(1, &pRenderTargetView, nullptr);
+	//// initialize shaders
+	//ID3D10Blob* pBlob = nullptr;
 
-	// If for some reason we fail to get a render target, create one.
-	// This will probably never happen with a real game but maybe certain test environments... :P
-	if (!pRenderTargetView)
-	{
-		// Get a pointer to the back buffer for the render target view
-		ID3D11Texture2D* pBackbuffer = nullptr;
-		hr = pSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackbuffer));
-		if (FAILED(hr))
-			return false;
+	//// create vertex shader
+	//if (!CompileShader(simpleShaders, "VS", "vs_5_0", &pBlob))
+	//	return false;
 
-		// Create render target view
-		hr = pDevice->CreateRenderTargetView(pBackbuffer, nullptr, &pRenderTargetView);
-		pBackbuffer->Release();
-		if (FAILED(hr))
-			return false;
+	//hr = pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
+	//if (FAILED(hr))
+	//	return false;
 
-		// Make sure our render target is set.
-		pContext->OMSetRenderTargets(1, &pRenderTargetView, nullptr);
-	}
+	//// Define/create the input layout for the vertex shader
+	//D3D11_INPUT_ELEMENT_DESC layout[2] = {
+	//{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	//{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	//};
+	//UINT numElements = ARRAYSIZE(layout);
 
-	// initialize shaders
-	ID3D10Blob* pBlob = nullptr;
+	//hr = pDevice->CreateInputLayout(layout, numElements, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pVertexLayout);
+	//if (FAILED(hr))
+	//	return false;
 
-	// create vertex shader
-	if (!CompileShader(simpleShaders, "VS", "vs_5_0", &pBlob))
-		return false;
+	//safe_release(pBlob);
 
-	hr = pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
-	if (FAILED(hr))
-		return false;
+	//// create pixel shader
+	//if (!CompileShader(simpleShaders, "PS", "ps_5_0", &pBlob))
+	//	return false;
 
-	// Define/create the input layout for the vertex shader
-	D3D11_INPUT_ELEMENT_DESC layout[2] = {
-	{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-	UINT numElements = ARRAYSIZE(layout);
+	//hr = pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
+	//if (FAILED(hr))
+	//	return false;
 
-	hr = pDevice->CreateInputLayout(layout, numElements, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pVertexLayout);
-	if (FAILED(hr))
-		return false;
+	//UINT numViewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
+	//float fWidth = 0;
+	//float fHeight = 0;
 
-	safe_release(pBlob);
+	//// Apparently this isn't universal. Works on some games
+	//pContext->RSGetViewports(&numViewports, pViewports);
 
-	// create pixel shader
-	if (!CompileShader(simpleShaders, "PS", "ps_5_0", &pBlob))
-		return false;
+	//if (!numViewports || !pViewports[MAINVP].Width)
+	//{
+	//	// This should be retrieved dynamically
+	//	//HWND hWnd0 = FindWindowA( "W2ViewportClass", nullptr );
+	//	HWND hWnd = FindMainWindow(GetCurrentProcessId());
+	//	RECT rc{ 0 };
+	//	if (!GetClientRect(hWnd, &rc))
+	//		return false;
 
-	hr = pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
-	if (FAILED(hr))
-		return false;
+	//	fWidth = (float)rc.right;
+	//	fHeight = (float)rc.bottom;
 
-	UINT numViewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
-	float fWidth = 0;
-	float fHeight = 0;
+	//	// Setup viewport
+	//	pViewports[MAINVP].Width = (float)fWidth;
+	//	pViewports[MAINVP].Height = (float)fHeight;
+	//	pViewports[MAINVP].MinDepth = 0.0f;
+	//	pViewports[MAINVP].MaxDepth = 1.0f;
 
-	// Apparently this isn't universal. Works on some games
-	pContext->RSGetViewports(&numViewports, pViewports);
+	//	// Set viewport to context
+	//	pContext->RSSetViewports(1, pViewports);
+	//}
+	//else
+	//{
+	//	fWidth = (float)pViewports[MAINVP].Width;
+	//	fHeight = (float)pViewports[MAINVP].Height;
+	//}
 
-	if (!numViewports || !pViewports[MAINVP].Width)
-	{
-		// This should be retrieved dynamically
-		//HWND hWnd0 = FindWindowA( "W2ViewportClass", nullptr );
-		HWND hWnd = FindMainWindow(GetCurrentProcessId());
-		RECT rc{ 0 };
-		if (!GetClientRect(hWnd, &rc))
-			return false;
+	//// Create the constant buffer
+	//D3D11_BUFFER_DESC bd{ 0 };
+	//bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	//bd.ByteWidth = sizeof(ConstantBuffer);
+	//bd.Usage = D3D11_USAGE_DEFAULT;
 
-		fWidth = (float)rc.right;
-		fHeight = (float)rc.bottom;
+	//// Setup orthographic projection
+	//mOrtho = XMMatrixOrthographicLH(fWidth, fHeight, 0.0f, 1.0f);
+	//ConstantBuffer cb;
+	//cb.mProjection = mOrtho;
 
-		// Setup viewport
-		pViewports[MAINVP].Width = (float)fWidth;
-		pViewports[MAINVP].Height = (float)fHeight;
-		pViewports[MAINVP].MinDepth = 0.0f;
-		pViewports[MAINVP].MaxDepth = 1.0f;
+	//D3D11_SUBRESOURCE_DATA sr{ 0 };
+	//sr.pSysMem = &cb;
+	//hr = pDevice->CreateBuffer(&bd, &sr, &pConstantBuffer);
+	//if (FAILED(hr))
+	//	return false;
 
-		// Set viewport to context
-		pContext->RSSetViewports(1, pViewports);
-	}
-	else
-	{
-		fWidth = (float)pViewports[MAINVP].Width;
-		fHeight = (float)pViewports[MAINVP].Height;
-	}
+	//// Create a quad
+	//// Create a vertex buffer, start by setting up a description.
+	//ZeroMemory(&bd, sizeof(bd));
+	//bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	//bd.Usage = D3D11_USAGE_DEFAULT;
+	//bd.ByteWidth = 4 * sizeof(Vertex);
+	//bd.StructureByteStride = sizeof(Vertex);
 
-	// Create the constant buffer
-	D3D11_BUFFER_DESC bd{ 0 };
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.ByteWidth = sizeof(ConstantBuffer);
-	bd.Usage = D3D11_USAGE_DEFAULT;
+	//// left and top edge of window
+	//float left = fWidth / -2;
+	//float top = fHeight / 2;
 
-	// Setup orthographic projection
-	mOrtho = XMMatrixOrthographicLH(fWidth, fHeight, 0.0f, 1.0f);
-	ConstantBuffer cb;
-	cb.mProjection = mOrtho;
+	//// Width and height of triangle
+	//float w = 500;
+	//float h = 500;
 
-	D3D11_SUBRESOURCE_DATA sr{ 0 };
-	sr.pSysMem = &cb;
-	hr = pDevice->CreateBuffer(&bd, &sr, &pConstantBuffer);
-	if (FAILED(hr))
-		return false;
+	//// Center position of triangle, this should center it in the screen.
+	//float fPosX = -1 * left;
+	//float fPosY = top;
 
-	// Create a quad
-	// Create a vertex buffer, start by setting up a description.
-	ZeroMemory(&bd, sizeof(bd));
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = 4 * sizeof(Vertex);
-	bd.StructureByteStride = sizeof(Vertex);
+	//// Setup vertices of triangle
+	//Vertex pVerts[4] = {
+	//	{ XMFLOAT3(left + fPosX + w / 2,	top - fPosY + h / 2,	1.0f),	XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
+	//	{ XMFLOAT3(left + fPosX - w / 2,	top - fPosY + h / 2,	1.0f),	XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
+	//	{ XMFLOAT3(left + fPosX + w / 2,	top - fPosY - h / 2,	1.0f),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
+	//	{ XMFLOAT3(left + fPosX - w / 2,	top - fPosY - h / 2,	1.0f),	XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) },
+	//};
 
-	// left and top edge of window
-	float left = fWidth / -2;
-	float top = fHeight / 2;
+	//// create the buffer.
+	//ZeroMemory(&sr, sizeof(sr));
+	//sr.pSysMem = &pVerts;
+	//hr = pDevice->CreateBuffer(&bd, &sr, &pVertexBuffer);
+	//if (FAILED(hr))
+	//	return false;
 
-	// Width and height of triangle
-	float w = 500;
-	float h = 500;
+	//// Create an index buffer
+	//ZeroMemory(&bd, sizeof(bd));
+	//ZeroMemory(&sr, sizeof(sr));
 
-	// Center position of triangle, this should center it in the screen.
-	float fPosX = -1 * left;
-	float fPosY = top;
+	//UINT pIndices[6] = { 0, 1, 2, 1, 2, 3 };
+	//bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	//bd.Usage = D3D11_USAGE_DEFAULT;
+	//bd.ByteWidth = sizeof(UINT) * 6;
+	//bd.StructureByteStride = sizeof(UINT);
 
-	// Setup vertices of triangle
-	Vertex pVerts[4] = {
-		{ XMFLOAT3(left + fPosX + w / 2,	top - fPosY + h / 2,	1.0f),	XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(left + fPosX - w / 2,	top - fPosY + h / 2,	1.0f),	XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(left + fPosX + w / 2,	top - fPosY - h / 2,	1.0f),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(left + fPosX - w / 2,	top - fPosY - h / 2,	1.0f),	XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) },
-	};
-
-	// create the buffer.
-	ZeroMemory(&sr, sizeof(sr));
-	sr.pSysMem = &pVerts;
-	hr = pDevice->CreateBuffer(&bd, &sr, &pVertexBuffer);
-	if (FAILED(hr))
-		return false;
-
-	// Create an index buffer
-	ZeroMemory(&bd, sizeof(bd));
-	ZeroMemory(&sr, sizeof(sr));
-
-	UINT pIndices[6] = { 0, 1, 2, 1, 2, 3 };
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(UINT) * 6;
-	bd.StructureByteStride = sizeof(UINT);
-
-	sr.pSysMem = &pIndices;
-	hr = pDevice->CreateBuffer(&bd, &sr, &pIndexBuffer);
-	if (FAILED(hr))
-		return false;
+	//sr.pSysMem = &pIndices;
+	//hr = pDevice->CreateBuffer(&bd, &sr, &pIndexBuffer);
+	//if (FAILED(hr))
+	//	return false;
 
 	return true;
 }
@@ -381,45 +356,46 @@ KeyboardClass keyboard = KeyboardClass();
 MouseClass mouse = MouseClass();
 void Render()
 {
-	// Make sure input works!
-	while (!keyboard.keyBufferIsEmpty()) {
-		KeyboardEvent event = keyboard.readKey();
-		printf("%ls\n", event.toString().c_str());
-	}
+	graphics.RenderFrame();
+	//// Make sure input works!
+	//while (!keyboard.keyBufferIsEmpty()) {
+	//	KeyboardEvent event = keyboard.readKey();
+	//	printf("%ls\n", event.toString().c_str());
+	//}
 
-	while (!mouse.eventBufferIsEmpty()) {
-		MouseEvent event = mouse.readEvent();
-		printf("%ls\n", event.toString().c_str());
-	}
+	//while (!mouse.eventBufferIsEmpty()) {
+	//	MouseEvent event = mouse.readEvent();
+	//	printf("%ls\n", event.toString().c_str());
+	//}
 
-	// Make sure our render target is set.
-	pContext->OMSetRenderTargets(1, &pRenderTargetView, nullptr);
+	//// Make sure our render target is set.
+	//pContext->OMSetRenderTargets(1, &pRenderTargetView, nullptr);
 
-	// Update view
-	ConstantBuffer cb;
-	cb.mProjection = XMMatrixTranspose(mOrtho);
-	pContext->UpdateSubresource(pConstantBuffer, 0, nullptr, &cb, 0, 0);
-	pContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
+	//// Update view
+	//ConstantBuffer cb;
+	//cb.mProjection = XMMatrixTranspose(mOrtho);
+	//pContext->UpdateSubresource(pConstantBuffer, 0, nullptr, &cb, 0, 0);
+	//pContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
 
-	// Make sure the input assembler knows how to process our verts/indices
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
-	pContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
-	pContext->IASetInputLayout(pVertexLayout);
-	pContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//// Make sure the input assembler knows how to process our verts/indices
+	//UINT stride = sizeof(Vertex);
+	//UINT offset = 0;
+	//pContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
+	//pContext->IASetInputLayout(pVertexLayout);
+	//pContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	//pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// Set the shaders we need to render our triangle
-	pContext->VSSetShader(pVertexShader, nullptr, 0);
-	pContext->PSSetShader(pPixelShader, nullptr, 0);
+	//// Set the shaders we need to render our triangle
+	//pContext->VSSetShader(pVertexShader, nullptr, 0);
+	//pContext->PSSetShader(pPixelShader, nullptr, 0);
 
-	// Set viewport to context
-	pContext->RSSetViewports(1, pViewports);
+	//// Set viewport to context
+	//pContext->RSSetViewports(1, pViewports);
 
-	// Draw triangle
-	if (keyboard.keyIsPressed(VK_F6)) {
-		pContext->DrawIndexed(6, 0, 0);
-	}
+	//// Draw triangle
+	//if (keyboard.keyIsPressed(VK_F6)) {
+	//	pContext->DrawIndexed(6, 0, 0);
+	//}
 }
 
 HRESULT __stdcall hkPresent(IDXGISwapChain* pThis, UINT SyncInterval, UINT Flags)
