@@ -3,8 +3,8 @@
 #include "KeyboardClass.h"
 #include "MouseClass.h"
 #include "Graphics.h"
+#include "Path.h"
 #include <string>
-#include <filesystem>
 #include <Windows.h>
 #include <WinUser.h>
 #include <d3d11.h>
@@ -199,10 +199,6 @@ bool CompileShader(const char* szShader, const char* szEntrypoint, const char* s
 
 // Direct3D Init Function
 bool InitD3DHook(IDXGISwapChain* pSwapchain) {
-	// Print the cwd
-	std::filesystem::path cwd = std::filesystem::current_path();
-	printf("Current path: %s\n", cwd.string().c_str());
-	// Well, fuck. The system uses the path at LoE!
 
 	graphics.Initialize(pSwapchain);
 

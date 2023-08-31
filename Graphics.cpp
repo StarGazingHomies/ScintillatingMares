@@ -120,9 +120,11 @@ bool Graphics::InitializeShaders() {
 
 	UINT numElements = ARRAYSIZE(layout);
 
-	if (!vertexShader.Initialize(pDevice, L"vertexshader.cso", layout, numElements)) return false;
+	std::filesystem::path vertexShaderLocation = getDllPath().parent_path() / "vertexshader.cso";
+	if (!vertexShader.Initialize(pDevice, vertexShaderLocation, layout, numElements)) return false;
 
-	if (!pixelShader.Initialize(pDevice, L"pixelshader.cso", layout, numElements)) return false;
+	std::filesystem::path pixelShaderLocation = getDllPath().parent_path() / "pixelshader.cso";
+	if (!pixelShader.Initialize(pDevice, pixelShaderLocation, layout, numElements)) return false;
 
 	return true;
 }

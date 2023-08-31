@@ -55,7 +55,7 @@ ID3D11InputLayout* VertexShader::getInputLayout() const {
 	return this->pInputLayout;
 }
 
-bool PixelShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D11_INPUT_ELEMENT_DESC* desc, UINT numElements) {
+bool PixelShader::Initialize(ID3D11Device* device, std::filesystem::path shaderPath, D3D11_INPUT_ELEMENT_DESC* desc, UINT numElements) {
 	// Load file
 	HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), &this->shaderBuffer);
 	if (FAILED(hr)) {

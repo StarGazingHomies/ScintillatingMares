@@ -169,6 +169,7 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MouseClass.h" />
     <ClInclude Include="MouseEvent.h" />
+    <ClInclude Include="Path.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="shaders.h" />

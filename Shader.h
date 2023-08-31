@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Logger.h"
+#include "Path.h"
 #pragma comment(lib, "D3DCompiler.lib")
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -19,7 +20,7 @@ private:
 
 class PixelShader {
 public:
-	bool Initialize(ID3D11Device* device, std::wstring shaderPath, D3D11_INPUT_ELEMENT_DESC* desc, UINT numElements);
+	bool Initialize(ID3D11Device* device, std::filesystem::path shaderPath, D3D11_INPUT_ELEMENT_DESC* desc, UINT numElements);
 	ID3D11PixelShader* getShader() const;
 	ID3D10Blob* getBuffer() const;
 private:
