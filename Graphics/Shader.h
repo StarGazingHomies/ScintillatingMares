@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Logger.h"
-#include "Path.h"
+#include "../Logger.h"
+#include "../Path.h"
 #pragma comment(lib, "D3DCompiler.lib")
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -12,6 +12,7 @@ public:
 	ID3D11VertexShader* getShader() const;
 	ID3D10Blob* getBuffer() const;
 	ID3D11InputLayout* getInputLayout() const;
+	~VertexShader();
 private:
 	ID3D11InputLayout* pInputLayout = nullptr;
 	ID3D11VertexShader* shader = nullptr;
@@ -20,9 +21,10 @@ private:
 
 class PixelShader {
 public:
-	bool Initialize(ID3D11Device* device, std::filesystem::path shaderPath, D3D11_INPUT_ELEMENT_DESC* desc, UINT numElements);
+	bool Initialize(ID3D11Device* device, std::filesystem::path shaderPath);
 	ID3D11PixelShader* getShader() const;
 	ID3D10Blob* getBuffer() const;
+	~PixelShader();
 private:
 	ID3D11PixelShader* shader = nullptr;
 	ID3D10Blob* shaderBuffer = nullptr;

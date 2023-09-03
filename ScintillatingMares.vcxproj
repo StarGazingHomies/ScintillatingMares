@@ -114,6 +114,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\shjer\Desktop\Programming\Unity-Tools\DLL_Inject_Test\ScintillatingMares\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,9 +149,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;SCINTILLATINGMARES_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\shjer\Desktop\Programming\Unity-Tools\DLL_Inject_Test\ScintillatingMares\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,36 +163,54 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Graphics\ConstantBuffer.h" />
+    <ClInclude Include="Graphics\ConstantBufferTypes.h" />
     <ClInclude Include="D3D_VMT_Indices.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Graphics.h" />
-    <ClInclude Include="KeyboardClass.h" />
-    <ClInclude Include="KeyboardEvent.h" />
+    <ClInclude Include="Graphics\Graphics.h" />
+    <ClInclude Include="Graphics\imgui\imconfig.h" />
+    <ClInclude Include="Graphics\imgui\imgui.h" />
+    <ClInclude Include="Graphics\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="Graphics\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="Graphics\imgui\imgui_internal.h" />
+    <ClInclude Include="Graphics\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Graphics\imgui\imstb_textedit.h" />
+    <ClInclude Include="Graphics\imgui\imstb_truetype.h" />
+    <ClInclude Include="Graphics\IndexBuffer.h" />
+    <ClInclude Include="Keyboard\KeyboardClass.h" />
+    <ClInclude Include="Keyboard\KeyboardEvent.h" />
     <ClInclude Include="Logger.h" />
-    <ClInclude Include="MouseClass.h" />
-    <ClInclude Include="MouseEvent.h" />
+    <ClInclude Include="Mouse\MouseClass.h" />
+    <ClInclude Include="Mouse\MouseEvent.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="shaders.h" />
+    <ClInclude Include="Graphics\Shader.h" />
     <ClInclude Include="StringConverter.h" />
-    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Graphics\Vertex.h" />
+    <ClInclude Include="Graphics\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="KeyboardClass.cpp" />
-    <ClCompile Include="KeyboardEvent.cpp" />
+    <ClCompile Include="Graphics\Graphics.cpp" />
+    <ClCompile Include="Graphics\imgui\imgui.cpp" />
+    <ClCompile Include="Graphics\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Graphics\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Graphics\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Graphics\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Graphics\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Graphics\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Keyboard\KeyboardClass.cpp" />
+    <ClCompile Include="Keyboard\KeyboardEvent.cpp" />
     <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="MouseClass.cpp" />
-    <ClCompile Include="MouseEvent.cpp" />
+    <ClCompile Include="Mouse\MouseClass.cpp" />
+    <ClCompile Include="Mouse\MouseEvent.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Graphics\Shader.cpp" />
     <ClCompile Include="StringConverter.cpp" />
   </ItemGroup>
   <ItemGroup>

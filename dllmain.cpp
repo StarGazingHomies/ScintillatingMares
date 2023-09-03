@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Logger.h"
-#include "KeyboardClass.h"
-#include "MouseClass.h"
-#include "Graphics.h"
+#include "Keyboard/KeyboardClass.h"
+#include "Mouse/MouseClass.h"
+#include "Graphics/Graphics.h"
 #include "Path.h"
 #include <string>
 #include <Windows.h>
@@ -19,10 +19,9 @@
 
 #define safe_release(p) if (p) { p->Release(); p = nullptr; } 
 
-#include "shaders.h"
 #include "D3D_VMT_Indices.h"
 #define VMT_PRESENT (UINT)IDXGISwapChainVMT::Present
-#define PRESENT_STUB_SIZE 5
+constexpr auto PRESENT_STUB_SIZE = 5;
 
 // d3d11 related object ptrs
 using namespace DirectX;
@@ -39,22 +38,6 @@ ID3D11Device* pDevice = nullptr;
 IDXGISwapChain* pSwapchain = nullptr;
 ID3D11DeviceContext* pContext = nullptr;
 ID3D11RenderTargetView* pRenderTargetView = nullptr;
-
-// Changing this to an array of viewports
-#define MAINVP 0
-D3D11_VIEWPORT pViewports[D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE]{ 0 };
-XMMATRIX mOrtho;
-
-struct ConstantBuffer
-{
-	XMMATRIX mProjection;
-};
-
-struct Vertex
-{
-	XMFLOAT3 pos;
-	XMFLOAT4 color;
-};
 
 HRESULT __stdcall hkPresent(IDXGISwapChain* pThis, UINT SyncInterval, UINT Flags);
 using fnPresent = HRESULT(__stdcall*)(IDXGISwapChain* pThis, UINT SyncInterval, UINT Flags);
@@ -202,139 +185,6 @@ bool InitD3DHook(IDXGISwapChain* pSwapchain) {
 
 	graphics.Initialize(pSwapchain);
 
-	//// initialize shaders
-	//ID3D10Blob* pBlob = nullptr;
-
-	//// create vertex shader
-	//if (!CompileShader(simpleShaders, "VS", "vs_5_0", &pBlob))
-	//	return false;
-
-	//hr = pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
-	//if (FAILED(hr))
-	//	return false;
-
-	//// Define/create the input layout for the vertex shader
-	//D3D11_INPUT_ELEMENT_DESC layout[2] = {
-	//{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	//{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	//};
-	//UINT numElements = ARRAYSIZE(layout);
-
-	//hr = pDevice->CreateInputLayout(layout, numElements, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pVertexLayout);
-	//if (FAILED(hr))
-	//	return false;
-
-	//safe_release(pBlob);
-
-	//// create pixel shader
-	//if (!CompileShader(simpleShaders, "PS", "ps_5_0", &pBlob))
-	//	return false;
-
-	//hr = pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
-	//if (FAILED(hr))
-	//	return false;
-
-	//UINT numViewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
-	//float fWidth = 0;
-	//float fHeight = 0;
-
-	//// Apparently this isn't universal. Works on some games
-	//pContext->RSGetViewports(&numViewports, pViewports);
-
-	//if (!numViewports || !pViewports[MAINVP].Width)
-	//{
-	//	// This should be retrieved dynamically
-	//	//HWND hWnd0 = FindWindowA( "W2ViewportClass", nullptr );
-	//	HWND hWnd = FindMainWindow(GetCurrentProcessId());
-	//	RECT rc{ 0 };
-	//	if (!GetClientRect(hWnd, &rc))
-	//		return false;
-
-	//	fWidth = (float)rc.right;
-	//	fHeight = (float)rc.bottom;
-
-	//	// Setup viewport
-	//	pViewports[MAINVP].Width = (float)fWidth;
-	//	pViewports[MAINVP].Height = (float)fHeight;
-	//	pViewports[MAINVP].MinDepth = 0.0f;
-	//	pViewports[MAINVP].MaxDepth = 1.0f;
-
-	//	// Set viewport to context
-	//	pContext->RSSetViewports(1, pViewports);
-	//}
-	//else
-	//{
-	//	fWidth = (float)pViewports[MAINVP].Width;
-	//	fHeight = (float)pViewports[MAINVP].Height;
-	//}
-
-	//// Create the constant buffer
-	//D3D11_BUFFER_DESC bd{ 0 };
-	//bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	//bd.ByteWidth = sizeof(ConstantBuffer);
-	//bd.Usage = D3D11_USAGE_DEFAULT;
-
-	//// Setup orthographic projection
-	//mOrtho = XMMatrixOrthographicLH(fWidth, fHeight, 0.0f, 1.0f);
-	//ConstantBuffer cb;
-	//cb.mProjection = mOrtho;
-
-	//D3D11_SUBRESOURCE_DATA sr{ 0 };
-	//sr.pSysMem = &cb;
-	//hr = pDevice->CreateBuffer(&bd, &sr, &pConstantBuffer);
-	//if (FAILED(hr))
-	//	return false;
-
-	//// Create a quad
-	//// Create a vertex buffer, start by setting up a description.
-	//ZeroMemory(&bd, sizeof(bd));
-	//bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	//bd.Usage = D3D11_USAGE_DEFAULT;
-	//bd.ByteWidth = 4 * sizeof(Vertex);
-	//bd.StructureByteStride = sizeof(Vertex);
-
-	//// left and top edge of window
-	//float left = fWidth / -2;
-	//float top = fHeight / 2;
-
-	//// Width and height of triangle
-	//float w = 500;
-	//float h = 500;
-
-	//// Center position of triangle, this should center it in the screen.
-	//float fPosX = -1 * left;
-	//float fPosY = top;
-
-	//// Setup vertices of triangle
-	//Vertex pVerts[4] = {
-	//	{ XMFLOAT3(left + fPosX + w / 2,	top - fPosY + h / 2,	1.0f),	XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
-	//	{ XMFLOAT3(left + fPosX - w / 2,	top - fPosY + h / 2,	1.0f),	XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
-	//	{ XMFLOAT3(left + fPosX + w / 2,	top - fPosY - h / 2,	1.0f),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
-	//	{ XMFLOAT3(left + fPosX - w / 2,	top - fPosY - h / 2,	1.0f),	XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) },
-	//};
-
-	//// create the buffer.
-	//ZeroMemory(&sr, sizeof(sr));
-	//sr.pSysMem = &pVerts;
-	//hr = pDevice->CreateBuffer(&bd, &sr, &pVertexBuffer);
-	//if (FAILED(hr))
-	//	return false;
-
-	//// Create an index buffer
-	//ZeroMemory(&bd, sizeof(bd));
-	//ZeroMemory(&sr, sizeof(sr));
-
-	//UINT pIndices[6] = { 0, 1, 2, 1, 2, 3 };
-	//bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	//bd.Usage = D3D11_USAGE_DEFAULT;
-	//bd.ByteWidth = sizeof(UINT) * 6;
-	//bd.StructureByteStride = sizeof(UINT);
-
-	//sr.pSysMem = &pIndices;
-	//hr = pDevice->CreateBuffer(&bd, &sr, &pIndexBuffer);
-	//if (FAILED(hr))
-	//	return false;
-
 	return true;
 }
 
@@ -352,46 +202,20 @@ KeyboardClass keyboard = KeyboardClass();
 MouseClass mouse = MouseClass();
 void Render()
 {
-	graphics.RenderFrame();
 	//// Make sure input works!
-	//while (!keyboard.keyBufferIsEmpty()) {
-	//	KeyboardEvent event = keyboard.readKey();
-	//	printf("%ls\n", event.toString().c_str());
-	//}
+	while (!keyboard.keyBufferIsEmpty()) {
+		KeyboardEvent event = keyboard.readKey();
+		printf("%ls\n", event.toString().c_str());
+	}
 
-	//while (!mouse.eventBufferIsEmpty()) {
-	//	MouseEvent event = mouse.readEvent();
-	//	printf("%ls\n", event.toString().c_str());
-	//}
+	while (!mouse.eventBufferIsEmpty()) {
+		MouseEvent event = mouse.readEvent();
+		printf("%ls\n", event.toString().c_str());
+	}
 
-	//// Make sure our render target is set.
-	//pContext->OMSetRenderTargets(1, &pRenderTargetView, nullptr);
-
-	//// Update view
-	//ConstantBuffer cb;
-	//cb.mProjection = XMMatrixTranspose(mOrtho);
-	//pContext->UpdateSubresource(pConstantBuffer, 0, nullptr, &cb, 0, 0);
-	//pContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
-
-	//// Make sure the input assembler knows how to process our verts/indices
-	//UINT stride = sizeof(Vertex);
-	//UINT offset = 0;
-	//pContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
-	//pContext->IASetInputLayout(pVertexLayout);
-	//pContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	//pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	//// Set the shaders we need to render our triangle
-	//pContext->VSSetShader(pVertexShader, nullptr, 0);
-	//pContext->PSSetShader(pPixelShader, nullptr, 0);
-
-	//// Set viewport to context
-	//pContext->RSSetViewports(1, pViewports);
-
-	//// Draw triangle
-	//if (keyboard.keyIsPressed(VK_F6)) {
-	//	pContext->DrawIndexed(6, 0, 0);
-	//}
+	if (keyboard.keyIsPressed(VK_F6)) {
+		graphics.RenderFrame();
+	}
 }
 
 HRESULT __stdcall hkPresent(IDXGISwapChain* pThis, UINT SyncInterval, UINT Flags)
@@ -436,8 +260,16 @@ void ReadFromMemory(DWORD addressToRead, float value) {
 
 // Callback function
 WNDPROC OldWndProc;
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 //LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
 LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+
+	// ImGui handle inputs
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam)) {
+		return true;
+	}
+
 	switch (uMsg) {
 	case WM_KEYDOWN: {
 		unsigned char keycode = static_cast<unsigned char>(wParam);
@@ -535,6 +367,21 @@ LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	}
 }
 
+const DWORD_PTR funcOffset = 0x59C980;
+// This is the offset for the Mining::getInstance() function iirc
+typedef long long* (*UnExportedFunc)();
+
+long long* CallUnExportedFunc() {
+	// This will get the DLL base address (which can vary)
+	HMODULE hMod = GetModuleHandleW(L"GameAssembly.dll");
+	// Calcualte the acutal address 
+	DWORD_PTR funcAddress = (DWORD_PTR)hMod + funcOffset;
+	// Cast the address to a function poniter
+	UnExportedFunc func = (UnExportedFunc)funcAddress;
+	// Call the function
+	return func();
+}
+
 DWORD WINAPI MainThread(LPVOID param) {
     // Console window
     AllocConsole();
@@ -545,13 +392,18 @@ DWORD WINAPI MainThread(LPVOID param) {
 	bool result = HookD3D();
 	if (result) {
 		printf("D3D successfully hooked.\n");
+		HMODULE hMod = GetModuleHandleW(L"GameAssembly.dll");
+		printf("GameAssembly dll location: %lld\n", (DWORD_PTR)hMod);
+		
+		// Not ready for this yet :/
+		//printf("%d\n", CallUnExportedFunc());
 		while (true) {
 			//if (GetAsyncKeyState(VK_F6) & 0x80000) {
 			//	MessageBoxA(NULL, "F6 PRESSED!", "F6 PRESSED!", MB_OK);
 			//}
-			if (keyboard.keyIsPressed(VK_F7) & 0x80000) {
-				break;
-			}
+			//if (keyboard.keyIsPressed(VK_F7) & 0x80000) {
+			//	break;
+			//}
 			Sleep(100);
 		}
 	}

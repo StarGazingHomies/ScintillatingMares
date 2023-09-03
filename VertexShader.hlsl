@@ -1,4 +1,27 @@
-float4 main(float2 inPos : POSITION) : SV_POSITION
+cbuffer mycBuffer : register(b0)
 {
-    return float4(inPos, 0, 1);
+    float xOffset;
+    float yOffset;
+};
+
+struct VS_INPUT
+{
+    float2 inPos : POSITION;
+    float2 inTexCoord : TEXCOORD;
+};
+
+struct VS_OUTPUT
+{
+    float4 outPos : SV_POSITION;
+    float2 outTexCoord : TEXCOORD;
+};
+
+VS_OUTPUT main(VS_INPUT input)
+{
+    VS_OUTPUT output;
+    input.inPos.x += xOffset;
+    input.inPos.y += yOffset;
+    output.outPos = float4(input.inPos, 0.0f, 1.0f);
+    output.outTexCoord = input.inTexCoord;
+    return output;
 }

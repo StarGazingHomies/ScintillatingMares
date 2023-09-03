@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "../pch.h"
 #include "MouseClass.h"
 
 void MouseClass::onLeftPressed(int x, int y) {

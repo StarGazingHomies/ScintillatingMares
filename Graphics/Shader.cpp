@@ -1,5 +1,7 @@
-#include "pch.h"
+#include "../pch.h"
 #include "Shader.h"
+
+#define safe_release(p) if (p) { p->Release(); p = nullptr; } 
 
 bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D11_INPUT_ELEMENT_DESC* layout, UINT numElements) {
 	
@@ -55,7 +57,12 @@ ID3D11InputLayout* VertexShader::getInputLayout() const {
 	return this->pInputLayout;
 }
 
-bool PixelShader::Initialize(ID3D11Device* device, std::filesystem::path shaderPath, D3D11_INPUT_ELEMENT_DESC* desc, UINT numElements) {
+VertexShader::~VertexShader() {
+	safe_release(this->shader);
+	safe_release(this->pInputLayout);
+}
+
+bool PixelShader::Initialize(ID3D11Device* device, std::filesystem::path shaderPath) {
 	// Load file
 	HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), &this->shaderBuffer);
 	if (FAILED(hr)) {
@@ -88,4 +95,8 @@ ID3D11PixelShader* PixelShader::getShader() const {
 
 ID3D10Blob* PixelShader::getBuffer() const {
 	return this->shaderBuffer;
+}
+
+PixelShader::~PixelShader() {
+	safe_release(this->shader);
 }
