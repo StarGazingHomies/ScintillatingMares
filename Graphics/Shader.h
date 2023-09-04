@@ -3,6 +3,7 @@
 #include "../Logger.h"
 #include "../Path.h"
 #pragma comment(lib, "D3DCompiler.lib")
+#include <wrl/client.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
@@ -14,9 +15,9 @@ public:
 	ID3D11InputLayout* getInputLayout() const;
 	~VertexShader();
 private:
-	ID3D11InputLayout* pInputLayout = nullptr;
-	ID3D11VertexShader* shader = nullptr;
-	ID3D10Blob* shaderBuffer = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> shader;
+	Microsoft::WRL::ComPtr<ID3D10Blob> shaderBuffer;
 };
 
 class PixelShader {
@@ -26,8 +27,8 @@ public:
 	ID3D10Blob* getBuffer() const;
 	~PixelShader();
 private:
-	ID3D11PixelShader* shader = nullptr;
-	ID3D10Blob* shaderBuffer = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> shader = nullptr;
+	Microsoft::WRL::ComPtr<ID3D10Blob> shaderBuffer = nullptr;
 };
 
 

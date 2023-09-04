@@ -40,6 +40,24 @@
     <Filter Include="Source Files\Graphics\ImGui">
       <UniqueIdentifier>{57a46d41-0c6d-4be3-888b-4ef82314b94d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\LoE">
+      <UniqueIdentifier>{7968b7d4-416e-4970-a35b-2d6622c46499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\LoE">
+      <UniqueIdentifier>{4d875360-6d99-4248-9e11-c7287695ba88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\LoE\Data">
+      <UniqueIdentifier>{07bbfad5-d567-43fd-a338-4f2df6ad02c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PugiXML">
+      <UniqueIdentifier>{4f3f1c6b-2161-46d0-97e2-dc08695d12f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PugiXML">
+      <UniqueIdentifier>{2802dc12-9663-495c-8140-d551e2c69632}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\LoE\Data">
+      <UniqueIdentifier>{75b3ec2e-eaca-46d5-a465-496f3339b235}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -117,6 +135,15 @@
     <ClInclude Include="Graphics\ConstantBuffer.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="PugiXML\pugiconfig.hpp">
+      <Filter>Header Files\PugiXML</Filter>
+    </ClInclude>
+    <ClInclude Include="PugiXML\pugixml.hpp">
+      <Filter>Header Files\PugiXML</Filter>
+    </ClInclude>
+    <ClInclude Include="LoE\FileManager.h">
+      <Filter>Header Files\LoE</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -169,6 +196,12 @@
     </ClCompile>
     <ClCompile Include="Graphics\imgui\imgui_widgets.cpp">
       <Filter>Source Files\Graphics\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="PugiXML\pugixml.cpp">
+      <Filter>Source Files\PugiXML</Filter>
+    </ClCompile>
+    <ClCompile Include="LoE\FileManager.cpp">
+      <Filter>Source Files\LoE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,7 @@
+pugixml is Copyright (C) 2006-2022 Arseny Kapoulkine
+
+imgui Copyright (c) 2014-2023 Omar Cornut
+
+directXTK Copyright (c) Microsoft Corporation
+
+Following Direct3D11 tutorials at https://www.youtube.com/playlist?list=PLcacUGyBsOIBlGyQQWzp6D1Xn6ZENx9Y2

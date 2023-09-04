@@ -4,6 +4,8 @@
 #include <string>
 #include <filesystem>
 
+// Simple helper functions for finding folders
+
 static int __dllVar = 0;
 
 static std::filesystem::path getGamePath() {

@@ -7,6 +7,11 @@ void Logger::Log(std::string message) {
 	MessageBoxA(NULL, error_message.c_str(), "Error", MB_ICONERROR);
 }
 
+void Logger::Log(std::wstring message) {
+	std::wstring error_message = L"Error: " + message;
+	MessageBoxW(NULL, error_message.c_str(), L"Error", MB_ICONERROR);
+}
+
 void Logger::Log(HRESULT hr, std::string message) {
 	_com_error error(hr);
 	
@@ -32,4 +37,10 @@ void Logger::Log(DWORD error, std::string message) {
     LocalFree(messageBuffer);
 
     MessageBoxA(NULL, ("Error: " + message + "\n" + error_message).c_str(), "Error", MB_ICONERROR);
+}
+
+void Logger::Log(pugi::xml_parse_result hr, std::string message) {
+	std::string error_message = "Error: " + message + "\n";
+	error_message += hr.description();
+	MessageBoxA(NULL, error_message.c_str(), "Error", MB_ICONERROR);
 }

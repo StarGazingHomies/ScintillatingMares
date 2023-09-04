@@ -9,15 +9,17 @@ public:
 	IndexBuffer() {}
 
 	~IndexBuffer() {
-		if (pBuffer) { pBuffer->Release(); pBuffer = nullptr; }
+		if (pBuffer.Get() == nullptr) {
+			pBuffer.Reset();
+		}
 	}
 
 	ID3D11Buffer* get() const {
-		return this->pBuffer;
+		return this->pBuffer.Get();
 	}
 
 	ID3D11Buffer* const* getAddressOf() const {
-		return &this->pBuffer;
+		return this->pBuffer.GetAddressOf();
 	}
 
 	UINT getBufferSize() const {
@@ -25,6 +27,10 @@ public:
 	}
 
 	HRESULT initialize(ID3D11Device* device, DWORD* data, UINT numIndices) {
+		if (pBuffer.Get() == nullptr) {
+			pBuffer.Reset();
+		}
+
 		this->bufferSize = numIndices;
 
 		D3D11_BUFFER_DESC indexBufferDesc;
@@ -40,12 +46,12 @@ public:
 		ZeroMemory(&indexBufferData, sizeof(data));
 		indexBufferData.pSysMem = data;
 
-		HRESULT hr = device->CreateBuffer(&indexBufferDesc, &indexBufferData, &this->pBuffer);
+		HRESULT hr = device->CreateBuffer(&indexBufferDesc, &indexBufferData, this->pBuffer.GetAddressOf());
 		return hr;
 	}
 
 private:
 	IndexBuffer(const IndexBuffer& rhs);
-	ID3D11Buffer* pBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pBuffer;
 	UINT bufferSize = 0;
 };

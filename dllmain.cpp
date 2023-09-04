@@ -4,6 +4,7 @@
 #include "Mouse/MouseClass.h"
 #include "Graphics/Graphics.h"
 #include "Path.h"
+#include "LoE/FileManager.h"
 #include <string>
 #include <Windows.h>
 #include <WinUser.h>
@@ -45,6 +46,8 @@ void* ogPresent;					// Pointer to the original Present function
 fnPresent ogPresentTramp;			// Function pointer that calls the Present stub in our trampoline
 void* pTrampoline = nullptr;		// Pointer to jmp instruction in our trampoline that leads to hkPresent
 char ogBytes[PRESENT_STUB_SIZE];	// Buffer to store original bytes from Present
+
+bool modEnabled = false;
 
 bool Hook(void* pSrc, void* pDst, size_t size);
 bool WriteMem(void* pDst, char* pBytes, size_t size);
@@ -181,9 +184,16 @@ bool CompileShader(const char* szShader, const char* szEntrypoint, const char* s
 
 
 // Direct3D Init Function
+// (Only initialize once to avoid memory leaks!)
+bool initialized = false;
+FileManager fm;
 bool InitD3DHook(IDXGISwapChain* pSwapchain) {
+	if (initialized) return true;
 
 	graphics.Initialize(pSwapchain);
+	fm = FileManager();
+
+	initialized = true;
 
 	return true;
 }
@@ -202,10 +212,13 @@ KeyboardClass keyboard = KeyboardClass();
 MouseClass mouse = MouseClass();
 void Render()
 {
-	//// Make sure input works!
+	// Make sure input works!
 	while (!keyboard.keyBufferIsEmpty()) {
 		KeyboardEvent event = keyboard.readKey();
 		printf("%ls\n", event.toString().c_str());
+		if (event.getKeyCode() == VK_F6 && event.isPress()) {
+			modEnabled = !modEnabled;
+		}
 	}
 
 	while (!mouse.eventBufferIsEmpty()) {
@@ -213,7 +226,7 @@ void Render()
 		printf("%ls\n", event.toString().c_str());
 	}
 
-	if (keyboard.keyIsPressed(VK_F6)) {
+	if (modEnabled) {
 		graphics.RenderFrame();
 	}
 }
@@ -266,7 +279,7 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT uMsg, WPARAM wPara
 LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 	// ImGui handle inputs
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam)) {
+	if (modEnabled && ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam)) {
 		return true;
 	}
 
@@ -285,12 +298,14 @@ LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				keyboard.onKeyPressed(keycode, lParam);
 			}
 		}
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_KEYUP: {
 		unsigned char keycode = static_cast<unsigned char>(wParam);
 		keyboard.onKeyReleased(keycode, lParam);
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_CHAR: {
 		unsigned char ch = static_cast<unsigned char>(wParam);
@@ -306,49 +321,57 @@ LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				keyboard.onChar(ch);
 			}
 		}
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_MOUSEMOVE: {
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		mouse.onMouseMove(x, y);
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_LBUTTONDOWN: {
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		mouse.onLeftPressed(x, y);
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_LBUTTONUP: {
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		mouse.onLeftReleased(x, y);
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_RBUTTONDOWN: {
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		mouse.onRightPressed(x, y);
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_RBUTTONUP: {
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		mouse.onRightReleased(x, y);
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_MBUTTONDOWN: {
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		mouse.onMiddlePressed(x, y);
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_MBUTTONUP: {
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		mouse.onMiddleReleased(x, y);
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
 	case WM_MOUSEWHEEL: {
 		int x = LOWORD(lParam);
@@ -360,11 +383,12 @@ LRESULT CALLBACK NewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		else {
 			mouse.onWheelDown(x, y);
 		}
-		return 0;
+		if (modEnabled) return 0;
+		else return OldWndProc(hwnd, uMsg, wParam, lParam);
 	}
-	default:
-		return OldWndProc(hwnd, uMsg, wParam, lParam);
+	default: {}
 	}
+	return OldWndProc(hwnd, uMsg, wParam, lParam);
 }
 
 const DWORD_PTR funcOffset = 0x59C980;
@@ -398,12 +422,6 @@ DWORD WINAPI MainThread(LPVOID param) {
 		// Not ready for this yet :/
 		//printf("%d\n", CallUnExportedFunc());
 		while (true) {
-			//if (GetAsyncKeyState(VK_F6) & 0x80000) {
-			//	MessageBoxA(NULL, "F6 PRESSED!", "F6 PRESSED!", MB_OK);
-			//}
-			//if (keyboard.keyIsPressed(VK_F7) & 0x80000) {
-			//	break;
-			//}
 			Sleep(100);
 		}
 	}

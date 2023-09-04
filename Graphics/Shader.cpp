@@ -1,12 +1,12 @@
 #include "../pch.h"
 #include "Shader.h"
 
-#define safe_release(p) if (p) { p->Release(); p = nullptr; } 
+#define safe_release(p) if (p.Get() == nullptr) { p.Reset(); }
 
 bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D11_INPUT_ELEMENT_DESC* layout, UINT numElements) {
 	
 	// Load file
-	HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), &this->shaderBuffer);
+	HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), this->shaderBuffer.GetAddressOf());
 	if (FAILED(hr)) {
 		std::wstring errMsg = L"Failed to load shader at ";
 		errMsg += shaderPath;
@@ -16,10 +16,10 @@ bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D
 
 	// Create shader
 	hr = device->CreateVertexShader(
-		this->shaderBuffer->GetBufferPointer(), 
+		this->shaderBuffer->GetBufferPointer(),
 		this->shaderBuffer->GetBufferSize(),
 		NULL,
-		&this->shader
+		this->shader.GetAddressOf()
 	);
 
 	if (FAILED(hr)) {
@@ -36,7 +36,7 @@ bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D
 		numElements,
 		this->shaderBuffer->GetBufferPointer(),
 		this->shaderBuffer->GetBufferSize(),
-		&this->pInputLayout
+		this->pInputLayout.GetAddressOf()
 	);
 
 	if (FAILED(hr)) {
@@ -46,15 +46,15 @@ bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D
 }
 
 ID3D11VertexShader* VertexShader::getShader() const {
-	return this->shader;
+	return this->shader.Get();
 }
 
 ID3D10Blob* VertexShader::getBuffer() const {
-	return this->shaderBuffer;
+	return this->shaderBuffer.Get();
 }
 
 ID3D11InputLayout* VertexShader::getInputLayout() const {
-	return this->pInputLayout;
+	return this->pInputLayout.Get();
 }
 
 VertexShader::~VertexShader() {
@@ -64,7 +64,7 @@ VertexShader::~VertexShader() {
 
 bool PixelShader::Initialize(ID3D11Device* device, std::filesystem::path shaderPath) {
 	// Load file
-	HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), &this->shaderBuffer);
+	HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), this->shaderBuffer.GetAddressOf());
 	if (FAILED(hr)) {
 		std::wstring errMsg = L"Failed to load shader at ";
 		errMsg += shaderPath;
@@ -77,7 +77,7 @@ bool PixelShader::Initialize(ID3D11Device* device, std::filesystem::path shaderP
 		this->shaderBuffer->GetBufferPointer(),
 		this->shaderBuffer->GetBufferSize(),
 		NULL,
-		&this->shader
+		this->shader.GetAddressOf()
 	);
 
 	if (FAILED(hr)) {
@@ -90,11 +90,11 @@ bool PixelShader::Initialize(ID3D11Device* device, std::filesystem::path shaderP
 }
 
 ID3D11PixelShader* PixelShader::getShader() const {
-	return this->shader;
+	return this->shader.Get();
 }
 
 ID3D10Blob* PixelShader::getBuffer() const {
-	return this->shaderBuffer;
+	return this->shaderBuffer.Get();
 }
 
 PixelShader::~PixelShader() {
