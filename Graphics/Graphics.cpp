@@ -53,7 +53,6 @@ void Graphics::RenderFrame() {
 	this->pContext->IASetVertexBuffers(0, 1, vertexBuffer.getAddressOf(), vertexBuffer.getStridePtr(), &offset);
 	this->pContext->IASetIndexBuffer(indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
 
-	// Now colors are acting weird. Fix later?
 	this->pContext->DrawIndexed(indexBuffer.getBufferSize(), 0, 0);
 
 	// Draw text
@@ -240,7 +239,7 @@ bool Graphics::InitializeShaders() {
 
 bool Graphics::InitializeScene() {
 	Vertex v[] = {
-		 Vertex( -0.5f, -0.5f,  0.0f,  1.0f), // Bottom Left
+		 Vertex( -0.5f, -0.5f,  0.0f,  0.0f), // Bottom Left
 		 Vertex( -0.5f,  0.5f,  0.0f,  1.0f), // Top Left
 		 Vertex(  0.5f, -0.5f,  1.0f,  0.0f), // Bottom Right
 		 Vertex(  0.5f,  0.5f,  1.0f,  1.0f), // Top Right

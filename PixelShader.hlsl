@@ -11,4 +11,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
     float3 pixelColor = objTexture.Sample(objSamplerState, input.inTexCoord);
     return float4(pixelColor, 1.0f);
+    //return float4(input.inTexCoord, 0.0f, 1.0f);
 }

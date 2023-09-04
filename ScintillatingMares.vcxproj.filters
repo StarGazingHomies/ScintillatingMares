@@ -144,6 +144,9 @@
     <ClInclude Include="LoE\FileManager.h">
       <Filter>Header Files\LoE</Filter>
     </ClInclude>
+    <ClInclude Include="LoE\Data\Item.h">
+      <Filter>Header Files\LoE\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -202,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="LoE\FileManager.cpp">
       <Filter>Source Files\LoE</Filter>
+    </ClCompile>
+    <ClCompile Include="LoE\Data\Item.cpp">
+      <Filter>Source Files\LoE\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

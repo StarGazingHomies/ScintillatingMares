@@ -20,6 +20,12 @@ enum class Talent {
 
 	ANIMAL_CARE,
 	FARMING,
+
+	// Not implemented in game
+	MUSIC,
+	WRITING,
+	FASHION,
+	ECONOMIC,
 };
 
 enum class Coloring {
@@ -49,15 +55,21 @@ struct ColorR8G8B8 {
 
 class Item {
 public:
+	// Constants
+	static const int ItemAtlasWidth = 32;
+	static const int ItemAtlasHeight = 32;
+
+	// Constructor
 	Item(pugi::xml_node item);
 
 	// Making these public because why the FUCK will I write 100000 get methods?
 	// also ugh items have so much data!
+
 	int ID;
 	int icon;
-	int itemLevel;
-	Talent talent;
-	int requiredLevel;
+	//int itemLevel;
+	//Talent talent;
+	//int requiredLevel;
 	std::string description;
 	std::string name;
 	//std::string resourcePath;

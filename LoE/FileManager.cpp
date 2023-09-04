@@ -37,16 +37,13 @@ bool FileManager::loadXML() {
 	pugi::xml_node itemsArrayNode = itemsXMLDoc.child("ArrayOfItem");
 	//printf("itemsArrayNode: %s\n");
 
-	for (pugi::xml_node item : itemsArrayNode.children("Item"))
+	for (pugi::xml_node itemNode : itemsArrayNode.children("Item"))
 	{
-		printf("Item: \n");
-
-		for (pugi::xml_node child : item.children())
-		{
-			printf("  %s = %s\n", child.name(), child.text().as_string());
-		}
-
-		std::cout << std::endl;
+		//printf("Item loaded: ");
+		Item itemObj = Item(itemNode);
+		items.push_back(itemObj);
+		//std::printf("ID: %d | Icon: %d | Name: %s | Desc: %s \n",
+		//	itemObj.ID, itemObj.icon, itemObj.name.c_str(), itemObj.description.c_str());
 	}
 
 	return true;

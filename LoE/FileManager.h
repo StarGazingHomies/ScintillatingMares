@@ -7,6 +7,8 @@
 #include "../PugiXML/pugixml.hpp"
 #include "../Logger.h"
 
+#include "Data/Item.h"
+
 class FileManager
 {
 public:
@@ -18,5 +20,6 @@ private:
 	std::filesystem::path dataPath;
 
 	pugi::xml_document itemsXMLDoc;
+	std::vector<Item> items;
 };
 
