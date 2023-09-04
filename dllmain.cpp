@@ -54,7 +54,7 @@ bool WriteMem(void* pDst, char* pBytes, size_t size);
 bool HookD3D();
 bool CompileShader(const char* szShader, const char* szEntrypoint, const char* szTarget, ID3D10Blob** pBlob);
 bool InitD3DHook(IDXGISwapChain* pSwapchain);
-void CleanupD3D();
+void CleanupD3D() {};
 void Render();
 
 HWND FindMainWindow(DWORD dwPID);
@@ -198,15 +198,15 @@ bool InitD3DHook(IDXGISwapChain* pSwapchain) {
 	return true;
 }
 
-void CleanupD3D()
-{
-	safe_release(pVertexBuffer);
-	safe_release(pIndexBuffer);
-	safe_release(pConstantBuffer);
-	safe_release(pPixelShader);
-	safe_release(pVertexShader);
-	safe_release(pVertexLayout);
-}
+//void CleanupD3D()
+//{
+//	safe_release(pVertexBuffer);
+//	safe_release(pIndexBuffer);
+//	safe_release(pConstantBuffer);
+//	safe_release(pPixelShader);
+//	safe_release(pVertexShader);
+//	safe_release(pVertexLayout);
+//}
 
 KeyboardClass keyboard = KeyboardClass();
 MouseClass mouse = MouseClass();

@@ -18,9 +18,8 @@ bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D
 	hr = device->CreateVertexShader(
 		this->shaderBuffer->GetBufferPointer(),
 		this->shaderBuffer->GetBufferSize(),
-		NULL,
-		this->shader.GetAddressOf()
-	);
+		NULL, 
+		this->shader.GetAddressOf());
 
 	if (FAILED(hr)) {
 		std::wstring errMsg = L"Failed to compile vertex shader at ";
@@ -28,12 +27,11 @@ bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D
 		Logger::Log(hr, errMsg);
 		return false;
 	}
-	return true;
 
 	// Create input layout
 	hr = device->CreateInputLayout(
 		layout,
-		numElements,
+		numElements, 
 		this->shaderBuffer->GetBufferPointer(),
 		this->shaderBuffer->GetBufferSize(),
 		this->pInputLayout.GetAddressOf()
@@ -43,6 +41,8 @@ bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D
 		Logger::Log(hr, "Failed to create input layout");
 		return false;
 	}
+
+	return true;
 }
 
 ID3D11VertexShader* VertexShader::getShader() const {

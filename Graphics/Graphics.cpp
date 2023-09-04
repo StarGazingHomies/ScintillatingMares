@@ -48,7 +48,6 @@ void Graphics::RenderFrame() {
 	this->pContext->VSSetConstantBuffers(0, 1, this->constantBuffer.getAddressOf());
 
 	// Set buffers
-	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	this->pContext->IASetVertexBuffers(0, 1, vertexBuffer.getAddressOf(), vertexBuffer.getStridePtr(), &offset);
 	this->pContext->IASetIndexBuffer(indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
@@ -82,6 +81,7 @@ void Graphics::RenderFrame() {
 
 	// Don't call present() since we are hooked into the beginning of present.
 	// Calling it creates infinite loop    *derp*
+	// I just don't know what went wrooooooooooooooo...
 	//this->pSwapchain->Present(1, NULL);
 }
 
@@ -209,7 +209,7 @@ bool Graphics::InitializeShaders() {
 		{
 			"POSITION", // Name
 			0,  // ID
-			DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, // Format
+			DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, // Format
 			0,  // Input slot
 			0,  // Offset
 			D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, // Vertex or instance data
@@ -238,11 +238,11 @@ bool Graphics::InitializeShaders() {
 }
 
 bool Graphics::InitializeScene() {
-	Vertex v[] = {
-		 Vertex( -0.5f, -0.5f,  0.0f,  0.0f), // Bottom Left
-		 Vertex( -0.5f,  0.5f,  0.0f,  1.0f), // Top Left
-		 Vertex(  0.5f, -0.5f,  1.0f,  0.0f), // Bottom Right
-		 Vertex(  0.5f,  0.5f,  1.0f,  1.0f), // Top Right
+	Vertex2 v[] = {
+		 Vertex2( -0.5f, -0.5f, 0.0f, 0.0f,  0.0f), // Bottom Left
+		 Vertex2( -0.5f,  0.5f, 0.0f, 0.0f,  1.0f), // Top Left
+		 Vertex2(  0.5f, -0.5f, 0.0f, 1.0f,  0.0f), // Bottom Right
+		 Vertex2(  0.5f,  0.5f, 0.0f, 1.0f,  1.0f), // Top Right
 	};
 
 	DWORD indices[] = {

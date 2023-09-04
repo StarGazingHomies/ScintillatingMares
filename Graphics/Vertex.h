@@ -11,3 +11,13 @@ struct Vertex {
 	DirectX::XMFLOAT2 pos;
 	DirectX::XMFLOAT2 texCoord;
 };
+
+struct Vertex2
+{
+	Vertex2() {}
+	Vertex2(float x, float y, float z, float u, float v)
+		: pos(x, y, z), texCoord(u, v) {}
+
+	DirectX::XMFLOAT3 pos;
+	DirectX::XMFLOAT2 texCoord;
+};

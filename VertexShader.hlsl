@@ -6,7 +6,7 @@ cbuffer mycBuffer : register(b0)
 
 struct VS_INPUT
 {
-    float2 inPos : POSITION;
+    float3 inPos : POSITION;
     float2 inTexCoord : TEXCOORD;
 };
 
@@ -19,12 +19,14 @@ struct VS_OUTPUT
 VS_OUTPUT main(VS_INPUT input)
 {
     VS_OUTPUT output;
-    float2 tmp = input.inPos;
+    //float2 tmp = input.inPos;
+    //tmp.x += 0.5;
+    //tmp.y += 0.5;
+    //output.outTexCoord = tmp;
     input.inPos.x += xOffset;
     input.inPos.y += yOffset;
-    output.outPos = float4(input.inPos, 0.0f, 1.0f);
-    tmp.x += 0.5;
-    tmp.y += 0.5;
-    output.outTexCoord = tmp;
+    output.outPos = float4(input.inPos, 1.0f);
+    
+    output.outTexCoord = input.inTexCoord;
     return output;
 }

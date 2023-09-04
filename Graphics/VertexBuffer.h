@@ -43,6 +43,8 @@ public:
 
 		this->bufferSize = numVertices;
 
+		printf("Vertex buffer initialized: Stride: %d | BufferSize: %d\n", *this->stride.get(), this->bufferSize);
+
 		D3D11_BUFFER_DESC vertexBufferDesc;
 		ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
 
