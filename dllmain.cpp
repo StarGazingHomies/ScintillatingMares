@@ -186,12 +186,10 @@ bool CompileShader(const char* szShader, const char* szEntrypoint, const char* s
 // Direct3D Init Function
 // (Only initialize once to avoid memory leaks!)
 bool initialized = false;
-FileManager fm;
 bool InitD3DHook(IDXGISwapChain* pSwapchain) {
 	if (initialized) return true;
 
 	graphics.Initialize(pSwapchain);
-	fm = FileManager();
 
 	initialized = true;
 

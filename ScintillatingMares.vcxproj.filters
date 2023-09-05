@@ -147,6 +147,9 @@
     <ClInclude Include="LoE\Data\Item.h">
       <Filter>Header Files\LoE\Data</Filter>
     </ClInclude>
+    <ClInclude Include="LoE\Data\Talent.h">
+      <Filter>Header Files\LoE\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

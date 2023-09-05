@@ -3,6 +3,7 @@
 
 bool Graphics::Initialize(IDXGISwapChain* pSwapchain) {
 	if (!LinkDirectX(pSwapchain)) return false;
+	if (!InitializeObjects()) return false;
 	if (!InitDirectX()) return false;
 	if (!InitializeShaders()) return false;
 	if (!InitializeScene()) return false;
@@ -238,11 +239,16 @@ bool Graphics::InitializeShaders() {
 }
 
 bool Graphics::InitializeScene() {
+
+	TexLocation texCoords = fm.getTextureLocation(0);
+
+	printf("%f, %f | %f, %f\n", texCoords.x1, texCoords.y1, texCoords.x2, texCoords.y2);
+
 	Vertex2 v[] = {
-		 Vertex2( -0.5f, -0.5f, 0.0f, 0.0f,  0.0f), // Bottom Left
-		 Vertex2( -0.5f,  0.5f, 0.0f, 0.0f,  1.0f), // Top Left
-		 Vertex2(  0.5f, -0.5f, 0.0f, 1.0f,  0.0f), // Bottom Right
-		 Vertex2(  0.5f,  0.5f, 0.0f, 1.0f,  1.0f), // Top Right
+		 Vertex2( -0.5f, -0.5f, 0.0f, texCoords.x1,  texCoords.y2), // Bottom Left
+		 Vertex2( -0.5f,  0.5f, 0.0f, texCoords.x1,  texCoords.y1), // Top Left
+		 Vertex2(  0.5f, -0.5f, 0.0f, texCoords.x2,  texCoords.y2), // Bottom Right
+		 Vertex2(  0.5f,  0.5f, 0.0f, texCoords.x2,  texCoords.y1), // Top Right
 	};
 
 	DWORD indices[] = {
@@ -283,6 +289,13 @@ bool Graphics::InitializeScene() {
 		Logger::Log(hr, "Failed to create constant buffer.");
 		return false;
 	}
+
+	return true;
+}
+
+bool Graphics::InitializeObjects() {
+	fm = FileManager();
+	if (!fm.Initialize()) return false;
 
 	return true;
 }

@@ -14,12 +14,20 @@ class FileManager
 public:
 	FileManager();
 
-	bool loadXML();
+	bool Initialize();
+	bool loadItems();
+
+	// Items
+	Item findItem(std::string name);
+	TexLocation getTextureLocation(int id);
+
+	// Recipes
+
 
 private:
 	std::filesystem::path dataPath;
 
 	pugi::xml_document itemsXMLDoc;
-	std::vector<Item> items;
+	std::unordered_map<int, Item> items;
 };
 

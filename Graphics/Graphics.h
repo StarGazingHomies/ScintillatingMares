@@ -6,6 +6,7 @@
 #include <DirectXTK/WICTextureLoader.h>
 #include "Vertex.h"
 #include "../Logger.h"
+#include "../LoE/FileManager.h"
 #include "Shader.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
@@ -35,6 +36,7 @@ private:
 	bool InitDirectX();
 	bool InitializeShaders();
 	bool InitializeScene();
+	bool InitializeObjects();
 
 	ID3D11Device* pDevice = nullptr;
 	IDXGISwapChain* pSwapchain = nullptr;
@@ -62,6 +64,7 @@ private:
 
 	float width, height;
 
+	FileManager fm;
 	char str0[128] = "Hello, world!";
 
 	static HWND FindMainWindow(DWORD dwPID);
