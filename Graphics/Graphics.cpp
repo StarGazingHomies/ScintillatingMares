@@ -23,8 +23,8 @@ void Graphics::RenderFrame() {
 	this->pContext->OMSetRenderTargets(1, &this->pRenderTargetView, nullptr);
 	this->pContext->RSSetViewports(1, this->pViewports);
 
-	float bgcolor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	this->pContext->ClearRenderTargetView(this->pRenderTargetView, bgcolor);
+	// float bgcolor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	// this->pContext->ClearRenderTargetView(this->pRenderTargetView, bgcolor);
 
 	// Input layout
 	this->pContext->IASetInputLayout(this->vertexShader.getInputLayout());
@@ -53,15 +53,23 @@ void Graphics::RenderFrame() {
 	this->pContext->IASetVertexBuffers(0, 1, vertexBuffer.getAddressOf(), vertexBuffer.getStridePtr(), &offset);
 	this->pContext->IASetIndexBuffer(indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
 
-	this->pContext->DrawIndexed(indexBuffer.getBufferSize(), 0, 0);
+	// this->pContext->DrawIndexed(indexBuffer.getBufferSize(), 0, 0);
 
 	// Draw text
 	spriteBatch->Begin();
 	spriteFont->DrawString(
 		spriteBatch.get(),
 		L"Scintillating Mares",
+		DirectX::XMFLOAT2(1.0f / width, 1.0f / height),
+		DirectX::Colors::Black,
+		0.0f,
 		DirectX::XMFLOAT2(0.0f, 0.0f),
-		DirectX::Colors::White,
+		DirectX::XMFLOAT2(0.5f, 0.5f));
+	spriteFont->DrawString(
+		spriteBatch.get(),
+		L"Scintillating Mares",
+		DirectX::XMFLOAT2(0.0f, 0.0f),
+		DirectX::Colors::Aqua,
 		0.0f,
 		DirectX::XMFLOAT2(0.0f, 0.0f),
 		DirectX::XMFLOAT2(0.5f, 0.5f));
@@ -72,9 +80,66 @@ void Graphics::RenderFrame() {
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	// Create a dummy test window
-	ImGui::Begin("Test");
-	ImGui::InputText("Input text test", str0, IM_ARRAYSIZE(str0));
+	ImGui::Begin("Item Search");
+	ImGui::InputText("", str0, IM_ARRAYSIZE(str0));
+
+	for (Item item : fm.searchItems(std::string(str0))) {
+		ImGui::Text(item.name.c_str());
+	}
+
 	ImGui::End();
+
+	// A window to control size? (Probably not doable until significant progress on the reverse engineering front)
+	
+	//ImGui::Begin("Window Size");
+	//ImGui::SliderFloat("Width", &this->width, 0.0f, 1920.0f);
+	//ImGui::SliderFloat("Height", &this->height, 0.0f, 1080.0f);
+	//ImGui::End();
+	
+	//if (width != lastWidth || height != lastHeight) {
+	//	lastWidth = width;
+	//	lastHeight = height;
+	
+	//  // NOTE: ALWAYS FAILS FOR SOME REASON
+	//	// Resize D3D framebuffers
+	//	this->pContext->OMSetRenderTargets(0, 0, 0);
+	//	this->pRenderTargetView->Release();
+	//	HRESULT hr;
+	//	hr = this->pSwapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+	//	if (FAILED(hr)) {
+	//		Logger::Log(hr, "Failed to resize swapchain buffers");
+	//		return;
+	//	}
+
+	//	ID3D11Texture2D* pBuffer;
+	//	hr = this->pSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBuffer);
+	//	if (FAILED(hr)) {
+	//		Logger::Log(hr, "Failed to get swapchain buffer");
+	//		return;
+	//	}
+
+	//	hr = this->pDevice->CreateRenderTargetView(pBuffer, NULL, &this->pRenderTargetView);
+	//	if (FAILED(hr)) {
+	//		Logger::Log(hr, "Failed to create render target view");
+	//	}
+	//	pBuffer->Release();
+	//	
+	//	this->pContext->OMSetRenderTargets(1, &this->pRenderTargetView, nullptr);
+
+	//	D3D11_VIEWPORT vp;
+	//	vp.Width = width;
+	//	vp.Height = height;
+	//	vp.MinDepth = 0.0f;
+	//	vp.MaxDepth = 1.0f;
+	//	vp.TopLeftX = 0;
+	//	vp.TopLeftY = 0;
+	//	this->pContext->RSSetViewports(1, &vp);
+
+		// Resize windows window
+	    // Only doing this is janky, because it just stretches the framebuffer to fill the window
+	//	SetWindowPos(FindMainWindow(GetCurrentProcessId()), HWND_TOP, 0, 0, width, height, SWP_NOMOVE | SWP_ASYNCWINDOWPOS);
+	//}
+
 	// Assemble draw data
 	ImGui::Render();
 	// Render

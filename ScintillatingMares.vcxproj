@@ -189,6 +189,8 @@
     <ClInclude Include="Graphics\Shader.h" />
     <ClInclude Include="PugiXML\pugiconfig.hpp" />
     <ClInclude Include="PugiXML\pugixml.hpp" />
+    <ClInclude Include="LoE\Data\Recipe.h" />
+    <ClInclude Include="LoE\Data\Reader.h" />
     <ClInclude Include="StringConverter.h" />
     <ClInclude Include="Graphics\Vertex.h" />
     <ClInclude Include="Graphics\VertexBuffer.h" />
@@ -219,6 +221,7 @@
     </ClCompile>
     <ClCompile Include="Graphics\Shader.cpp" />
     <ClCompile Include="PugiXML\pugixml.cpp" />
+    <ClCompile Include="LoE\Data\Recipe.cpp" />
     <ClCompile Include="StringConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +241,13 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Attributions.txt" />
+    <Text Include="LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

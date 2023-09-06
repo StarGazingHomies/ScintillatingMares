@@ -47,7 +47,7 @@ fnPresent ogPresentTramp;			// Function pointer that calls the Present stub in o
 void* pTrampoline = nullptr;		// Pointer to jmp instruction in our trampoline that leads to hkPresent
 char ogBytes[PRESENT_STUB_SIZE];	// Buffer to store original bytes from Present
 
-bool modEnabled = false;
+bool modEnabled = true;
 
 bool Hook(void* pSrc, void* pDst, size_t size);
 bool WriteMem(void* pDst, char* pBytes, size_t size);
@@ -420,6 +420,10 @@ DWORD WINAPI MainThread(LPVOID param) {
 		// Not ready for this yet :/
 		//printf("%d\n", CallUnExportedFunc());
 		while (true) {
+
+			if (GetAsyncKeyState(VK_F7) & 0x8000) {
+				break;
+			}
 			Sleep(100);
 		}
 	}

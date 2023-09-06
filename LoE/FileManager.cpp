@@ -43,12 +43,27 @@ bool FileManager::loadItems() {
 	pugi::xml_node itemsArrayNode = itemsXMLDoc.child("ArrayOfItem");
 
 	for (pugi::xml_node itemNode : itemsArrayNode.children("Item")) {
-		//printf("Item loaded: ");
 		Item itemObj = Item(itemNode);
 		items.insert({itemObj.ID, itemObj});
-		std::printf("ID: %d | Icon: %d | Talent: %s | Name: %s | Desc: %s\n",
-			itemObj.ID, itemObj.icon, talentToStr(itemObj.talent).c_str(), itemObj.name.c_str(), itemObj.description.c_str());
+		std::printf("Item loaded: %s\n", itemObj.toString().c_str());
 	}
+
+	return true;
+}
+
+bool FileManager::loadRecipes() {
+
+	std::filesystem::path recipesXMLPath = dataPath / "data" / "Recipes.xml";
+	pugi::xml_parse_result result = recipesXMLDoc.load_file(recipesXMLPath.c_str());
+
+	if (!result) {
+		std::string errorStr = "Error loading Recipes.xml from:\n";
+		errorStr += recipesXMLPath.string();
+		Logger::Log(result, errorStr);
+		return false;
+	}
+
+	pugi::xml_node recipesArrayNode = recipesXMLDoc.child("ArrayOfRecipe");
 
 	return true;
 }
@@ -60,6 +75,16 @@ Item FileManager::findItem(std::string name) {
 		}
 	}
 	return Item();
+}
+
+std::vector<Item> FileManager::searchItems(std::string name) {
+	std::vector<Item> results;
+	for (std::pair<int, Item> item : items) {
+		if (item.second.match(name)) {
+			results.push_back(item.second);
+		}
+	}
+	return results;
 }
 
 TexLocation FileManager::getTextureLocation(int id) {

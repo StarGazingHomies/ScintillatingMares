@@ -8,17 +8,21 @@
 #include "../Logger.h"
 
 #include "Data/Item.h"
+#include "Data/Recipe.h"
 
-class FileManager
-{
+
+class FileManager {
 public:
 	FileManager();
 
+	// Initialization
 	bool Initialize();
 	bool loadItems();
+	bool loadRecipes();
 
 	// Items
 	Item findItem(std::string name);
+	std::vector<Item> searchItems(std::string name);
 	TexLocation getTextureLocation(int id);
 
 	// Recipes
@@ -28,6 +32,7 @@ private:
 	std::filesystem::path dataPath;
 
 	pugi::xml_document itemsXMLDoc;
+	pugi::xml_document recipesXMLDoc;
 	std::unordered_map<int, Item> items;
 };
 

@@ -62,7 +62,7 @@ private:
 	VertexShader vertexShader;
 	PixelShader pixelShader;
 
-	float width, height;
+	float width, height, lastWidth, lastHeight;
 
 	FileManager fm;
 	char str0[128] = "Hello, world!";

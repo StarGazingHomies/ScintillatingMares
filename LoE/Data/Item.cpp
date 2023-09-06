@@ -1,4 +1,5 @@
 #include "Item.h"
+#include <algorithm>
 
 Item::Item() {
 	this->name = "INVALID ITEM";
@@ -12,11 +13,27 @@ Item::Item(pugi::xml_node item) {
 	// Read strings
 	this->name = readString(item, "Name");
 	this->description = readString(item, "Description");
+	this->resourcePath = readString(item, "ResourcePath");
+	this->group = readString(item, "Group");
 	// Read ints
 	this->ID = readInt(item, "ID");
 	this->icon = readInt(item, "Icon");
-	// Read talents
+	this->itemLevel = readInt(item, "ItemLevel");
+	this->requiredLevel = readInt(item, "RequiredLevel");
+	this->maxStackSize = readInt(item, "MaxStackSize");
+	this->purchasePrice = readInt(item, "PurchasePrice");
+	this->sellPrice = readInt(item, "SellPrice");
+	// Read bools
+	this->tradeable = readBool(item, "Tradeable");
+	this->salable = readBool(item, "Salable");
+	this->stackable = readBool(item, "Stackable");
+	// Coloring stuff
+	this->color1 = readColor(item, "DefaultColor");
+	this->color2 = readColor(item, "DefaultColor2");
+	this->color3 = readColor(item, "DefaultColor3");
+	// Read others
 	this->talent = readTalent(item, "Talent");
+	this->wearableSlots = readSlots(item, "WearableSlots");
 }
 
 TexLocation Item::getTextureLocation() const {
@@ -30,31 +47,15 @@ TexLocation Item::getTextureLocation() const {
 	return TexLocation(x1, y1, x2, y2);
 }
 
-int Item::readInt(pugi::xml_node node, const char* name) {
-	pugi::xml_node intNode = node.child(name);
-	if (intNode) {
-		return intNode.text().as_int();
-	}
-	else {
-		return 0;
-	}
+std::string Item::toString() const {
+	return std::format("{0} (ID: {1}) - {2}", this->name, this->ID, this->description);
 }
 
-std::string Item::readString(pugi::xml_node node, const char* name) {
-	pugi::xml_node stringNode = node.child(name);
-	if (stringNode) {
-		return stringNode.text().as_string();
-	}
-	else {
-		return "";
-	}
-}
-
-Talent Item::readTalent(pugi::xml_node node, const char* name) {
-	pugi::xml_node talentNode = node.child(name);
-	if (talentNode) {
-		std::string talentStr = talentNode.text().as_string();
-		return talentFromStr(talentStr);
-	}
-	return Talent::INVALID;
+bool Item::match(std::string search) const {
+	auto it = std::search(
+		name.begin(), name.end(),
+		search.begin(), search.end(),
+		[](unsigned char ch1, unsigned char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
+	);
+	return (it != name.end());
 }

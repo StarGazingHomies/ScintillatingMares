@@ -58,6 +58,9 @@
     <Filter Include="Source Files\LoE\Data">
       <UniqueIdentifier>{75b3ec2e-eaca-46d5-a465-496f3339b235}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{3ed5d0d0-3b58-46ac-81b3-96cea58a33c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -150,6 +153,12 @@
     <ClInclude Include="LoE\Data\Talent.h">
       <Filter>Header Files\LoE\Data</Filter>
     </ClInclude>
+    <ClInclude Include="LoE\Data\Recipe.h">
+      <Filter>Header Files\LoE\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="LoE\Data\Reader.h">
+      <Filter>Header Files\LoE\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -212,13 +221,29 @@
     <ClCompile Include="LoE\Data\Item.cpp">
       <Filter>Source Files\LoE\Data</Filter>
     </ClCompile>
+    <ClCompile Include="LoE\Data\Recipe.cpp">
+      <Filter>Source Files\LoE\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Attributions.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="LICENSE.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
