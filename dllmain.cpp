@@ -454,18 +454,18 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_PROCESS_ATTACH: {
 		DisableThreadLibraryCalls(hModule);
 		// MessageBoxA(NULL, "DLL Injected!", "Mares Mares Mares!", MB_OK);
-		// Logger::Log(E_INVALIDARG, "Test Message");
+		// ErrorLogger::Log(E_INVALIDARG, "Test Message");
 		// Get the current window so we can subclass WndProc
 
 		HWND hWnd = FindWindow(NULL, TEXT("Legends of Equestria"));
-		//Logger::Log("Window process handle: " + std::to_string((int)hWnd));
+		//ErrorLogger::Log("Window process handle: " + std::to_string((int)hWnd));
 		if (hWnd) {
 			//bool subclassResult = SetWindowSubclass(hWnd, &NewWindowProc, MY_SUBCLASS_ID, 0);
-			//Logger::Log("Window subclass result: " + std::to_string(subclassResult));
+			//ErrorLogger::Log("Window subclass result: " + std::to_string(subclassResult));
 			OldWndProc = (WNDPROC) SetWindowLongPtr(hWnd, -4, (LONG_PTR)NewWindowProc);
-			//Logger::Log("Window subclass result: " + std::to_string((int)OldWndProc));
+			//ErrorLogger::Log("Window subclass result: " + std::to_string((int)OldWndProc));
 			DWORD err = GetLastError();
-			//Logger::Log(err, "Subclass error");
+			//ErrorLogger::Log(err, "Subclass error");
 		}
 
         HANDLE hThread = CreateThread(0, 0, MainThread, hModule, 0, 0);

@@ -644,14 +644,14 @@ struct ImSpanAllocator
 };
 
 // Helper: ImPool<>
-// Basic keyed storage for contiguous instances, slow/amortized insertion, O(1) indexable, O(Log N) queries by ID over a dense/hot buffer,
+// Basic keyed storage for contiguous instances, slow/amortized insertion, O(1) indexable, O(Log N) queries by id over a dense/hot buffer,
 // Honor constructor/destructor. Add/remove invalidate all pointers. Indexes have the same lifetime as the associated object.
 typedef int ImPoolIdx;
 template<typename T>
 struct ImPool
 {
     ImVector<T>     Buf;        // Contiguous data
-    ImGuiStorage    Map;        // ID->Index
+    ImGuiStorage    Map;        // id->Index
     ImPoolIdx       FreeIdx;    // Next free idx to use
     ImPoolIdx       AliveCount; // Number of active/alive items (for display purpose)
 
@@ -897,7 +897,7 @@ enum ImGuiSelectableFlagsPrivate_
     ImGuiSelectableFlags_SelectOnClick          = 1 << 22,  // Override button behavior to react on Click (default is Click+Release)
     ImGuiSelectableFlags_SelectOnRelease        = 1 << 23,  // Override button behavior to react on Release (default is Click+Release)
     ImGuiSelectableFlags_SpanAvailWidth         = 1 << 24,  // Span all avail width even if we declared less for layout purpose. FIXME: We may be able to remove this (added in 6251d379, 2bcafc86 for menus)
-    ImGuiSelectableFlags_SetNavIdOnHover        = 1 << 25,  // Set Nav/Focus ID on mouse hover (used by MenuItem)
+    ImGuiSelectableFlags_SetNavIdOnHover        = 1 << 25,  // Set Nav/Focus id on mouse hover (used by MenuItem)
     ImGuiSelectableFlags_NoPadWithHalfSpacing   = 1 << 26,  // Disable padding each side with ItemSpacing * 0.5f
     ImGuiSelectableFlags_NoSetKeyOwner          = 1 << 27,  // Don't set key/input owner on the initial click (note: mouse buttons are keys! often, the key in question will be ImGuiKey_MouseLeft!)
 };
@@ -1081,7 +1081,7 @@ struct IMGUI_API ImGuiInputTextDeactivatedState
     void    ClearFreeMemory()           { ID = 0; TextA.clear(); }
 };
 // Internal state of the currently focused/edited text input box
-// For a given item ID, access with ImGui::GetInputTextState()
+// For a given item id, access with ImGui::GetInputTextState()
 struct IMGUI_API ImGuiInputTextState
 {
     ImGuiContext*           Ctx;                    // parent UI context (needs to be set explicitly by parent).
@@ -1393,8 +1393,8 @@ enum ImGuiInputFlags_
     ImGuiInputFlags_CondMask_           = ImGuiInputFlags_CondHovered | ImGuiInputFlags_CondActive,
 
     // Flags for SetKeyOwner(), SetItemKeyOwner()
-    ImGuiInputFlags_LockThisFrame       = 1 << 6,   // Access to key data will require EXPLICIT owner ID (ImGuiKeyOwner_Any/0 will NOT accepted for polling). Cleared at end of frame. This is useful to make input-owner-aware code steal keys from non-input-owner-aware code.
-    ImGuiInputFlags_LockUntilRelease    = 1 << 7,   // Access to key data will require EXPLICIT owner ID (ImGuiKeyOwner_Any/0 will NOT accepted for polling). Cleared when the key is released or at end of each frame if key is released. This is useful to make input-owner-aware code steal keys from non-input-owner-aware code.
+    ImGuiInputFlags_LockThisFrame       = 1 << 6,   // Access to key data will require EXPLICIT owner id (ImGuiKeyOwner_Any/0 will NOT accepted for polling). Cleared at end of frame. This is useful to make input-owner-aware code steal keys from non-input-owner-aware code.
+    ImGuiInputFlags_LockUntilRelease    = 1 << 7,   // Access to key data will require EXPLICIT owner id (ImGuiKeyOwner_Any/0 will NOT accepted for polling). Cleared when the key is released or at end of each frame if key is released. This is useful to make input-owner-aware code steal keys from non-input-owner-aware code.
 
     // Routing policies for Shortcut() + low-level SetShortcutRouting()
     // - The general idea is that several callers register interest in a shortcut, and only one owner gets it.
@@ -1519,8 +1519,8 @@ enum ImGuiNavLayer
 struct ImGuiNavItemData
 {
     ImGuiWindow*        Window;         // Init,Move    // Best candidate window (result->ItemWindow->RootWindowForNav == request->Window)
-    ImGuiID             ID;             // Init,Move    // Best candidate item ID
-    ImGuiID             FocusScopeId;   // Init,Move    // Best candidate focus scope ID
+    ImGuiID             ID;             // Init,Move    // Best candidate item id
+    ImGuiID             FocusScopeId;   // Init,Move    // Best candidate focus scope id
     ImRect              RectRel;        // Init,Move    // Best candidate bounding box in window relative space
     ImGuiItemFlags      InFlags;        // ????,Move    // Best candidate item flags
     float               DistBox;        //      Move    // Best candidate box distance to current NavId
@@ -1743,7 +1743,7 @@ struct ImGuiStackTool
 {
     int                     LastActiveFrame;
     int                     StackLevel;                 // -1: query stack and resize Results, >= 0: individual stack level
-    ImGuiID                 QueryId;                    // ID to query details for
+    ImGuiID                 QueryId;                    // id to query details for
     ImVector<ImGuiStackLevelInfo> Results;
     bool                    CopyToClipboardOnCtrlC;
     float                   CopyToClipboardLastTime;
@@ -1760,7 +1760,7 @@ enum ImGuiContextHookType { ImGuiContextHookType_NewFramePre, ImGuiContextHookTy
 
 struct ImGuiContextHook
 {
-    ImGuiID                     HookId;     // A unique ID assigned by AddContextHook()
+    ImGuiID                     HookId;     // A unique id assigned by AddContextHook()
     ImGuiContextHookType        Type;
     ImGuiID                     Owner;
     ImGuiContextHookCallback    Callback;
@@ -1849,7 +1849,7 @@ struct ImGuiContext
 
     // [EXPERIMENTAL] Key/Input Ownership + Shortcut Routing system
     // - The idea is that instead of "eating" a given key, we can link to an owner.
-    // - Input query can then read input by specifying ImGuiKeyOwner_Any (== 0), ImGuiKeyOwner_None (== -1) or a custom ID.
+    // - Input query can then read input by specifying ImGuiKeyOwner_Any (== 0), ImGuiKeyOwner_None (== -1) or a custom id.
     // - Routing is requested ahead of time for a given chord (Key + Mods) and granted in NewFrame().
     ImGuiKeyOwnerData       KeysOwnerData[ImGuiKey_NamedKey_COUNT];
     ImGuiKeyRoutingTable    KeysRoutingTable;
@@ -1999,7 +1999,7 @@ struct ImGuiContext
     ImGuiID                 TempInputId;                        // Temporary text input when CTRL+clicking on a slider, etc.
     ImGuiColorEditFlags     ColorEditOptions;                   // Store user options for color edit widgets
     ImGuiID                 ColorEditCurrentID;                 // Set temporarily while inside of the parent-most ColorEdit4/ColorPicker4 (because they call each others).
-    ImGuiID                 ColorEditSavedID;                   // ID we are saving/restoring HS for
+    ImGuiID                 ColorEditSavedID;                   // id we are saving/restoring HS for
     float                   ColorEditSavedHue;                  // Backup of last Hue associated to LastColor, so we can restore Hue in lossy RGB<>HSV round trips
     float                   ColorEditSavedSat;                  // Backup of last Saturation associated to LastColor, so we can restore Saturation in lossy RGB<>HSV round trips
     ImU32                   ColorEditSavedColor;                // RGB value with alpha set to 0.
@@ -2058,7 +2058,7 @@ struct ImGuiContext
     ImS8                    DebugBeginReturnValueCullDepth;     // Cycle between 0..9 then wrap around.
     bool                    DebugItemPickerActive;              // Item picker is active (started with DebugStartItemPicker())
     ImU8                    DebugItemPickerMouseButton;
-    ImGuiID                 DebugItemPickerBreakId;             // Will call IM_DEBUG_BREAK() when encountering this ID
+    ImGuiID                 DebugItemPickerBreakId;             // Will call IM_DEBUG_BREAK() when encountering this id
     ImGuiMetricsConfig      DebugMetricsConfig;
     ImGuiStackTool          DebugStackTool;
 
@@ -2322,7 +2322,7 @@ struct IMGUI_API ImGuiWindow
     float                   DecoInnerSizeX1, DecoInnerSizeY1;   // Applied AFTER/OVER InnerRect. Specialized for Tables as they use specialized form of clipping and frozen rows/columns are inside InnerRect (and not part of regular decoration sizes).
     int                     NameBufLen;                         // Size of buffer storing Name. May be larger than strlen(Name)!
     ImGuiID                 MoveId;                             // == window->GetID("#MOVE")
-    ImGuiID                 ChildId;                            // ID of corresponding item in parent window (for navigation to return from child window to parent window)
+    ImGuiID                 ChildId;                            // id of corresponding item in parent window (for navigation to return from child window to parent window)
     ImVec2                  Scroll;
     ImVec2                  ScrollMax;
     ImVec2                  ScrollTarget;                       // target scroll position. stored as cursor position with scrolling canceled out, so the highest point is always 0.0f. (FLT_MAX for no change)
@@ -2347,7 +2347,7 @@ struct IMGUI_API ImGuiWindow
     short                   BeginOrderWithinParent;             // Begin() order within immediate parent window, if we are a child window. Otherwise 0.
     short                   BeginOrderWithinContext;            // Begin() order within entire imgui context. This is mostly used for debugging submission order related issues.
     short                   FocusOrder;                         // Order within WindowsFocusOrder[], altered when windows are focused.
-    ImGuiID                 PopupId;                            // ID in the popup stack when this window is used as a popup/menu (because we use generic Name/ID for recycling)
+    ImGuiID                 PopupId;                            // id in the popup stack when this window is used as a popup/menu (because we use generic Name/id for recycling)
     ImS8                    AutoFitFramesX, AutoFitFramesY;
     ImS8                    AutoFitChildAxises;
     bool                    AutoFitOnlyGrows;
@@ -2362,7 +2362,7 @@ struct IMGUI_API ImGuiWindow
     ImVec2                  SetWindowPosVal;                    // store window position when using a non-zero Pivot (position set needs to be processed when we know the window size)
     ImVec2                  SetWindowPosPivot;                  // store window pivot for positioning. ImVec2(0, 0) when positioning from top-left corner; ImVec2(0.5f, 0.5f) for centering; ImVec2(1, 1) for bottom right.
 
-    ImVector<ImGuiID>       IDStack;                            // ID stack. ID are hashes seeded with the value at the top of the stack. (In theory this should be in the TempData structure)
+    ImVector<ImGuiID>       IDStack;                            // id stack. id are hashes seeded with the value at the top of the stack. (In theory this should be in the TempData structure)
     ImGuiWindowTempData     DC;                                 // Temporary per-window data, reset at the beginning of the frame. This used to be called ImGuiDrawContext, hence the "DC" variable name.
 
     // The best way to understand what those rectangles are is to use the 'Metrics->Tools->Show Windows Rectangles' viewer.
@@ -2398,7 +2398,7 @@ struct IMGUI_API ImGuiWindow
     ImGuiID                 NavLastIds[ImGuiNavLayer_COUNT];    // Last known NavId for this window, per layer (0/1)
     ImRect                  NavRectRel[ImGuiNavLayer_COUNT];    // Reference rectangle, in window relative space
     ImVec2                  NavPreferredScoringPosRel[ImGuiNavLayer_COUNT]; // Preferred X/Y position updated when moving on a given axis, reset to FLT_MAX.
-    ImGuiID                 NavRootFocusScopeId;                // Focus Scope ID at the time of Begin()
+    ImGuiID                 NavRootFocusScopeId;                // Focus Scope id at the time of Begin()
 
     int                     MemoryDrawListIdxCapacity;          // Backup of last idx/vtx count, so when waking up the window we can preallocate and avoid iterative alloc/copy
     int                     MemoryDrawListVtxCapacity;
@@ -2612,8 +2612,8 @@ struct IMGUI_API ImGuiTable
     int                         ColumnsCount;               // Number of columns declared in BeginTable()
     int                         CurrentRow;
     int                         CurrentColumn;
-    ImS16                       InstanceCurrent;            // Count of BeginTable() calls with same ID in the same frame (generally 0). This is a little bit similar to BeginCount for a window, but multiple table with same ID look are multiple tables, they are just synched.
-    ImS16                       InstanceInteracted;         // Mark which instance (generally 0) of the same ID is being interacted with
+    ImS16                       InstanceCurrent;            // Count of BeginTable() calls with same id in the same frame (generally 0). This is a little bit similar to BeginCount for a window, but multiple table with same id look are multiple tables, they are just synched.
+    ImS16                       InstanceInteracted;         // Mark which instance (generally 0) of the same id is being interacted with
     float                       RowPosY1;
     float                       RowPosY2;
     float                       RowMinHeight;               // Height submitted to TableNextRow()
@@ -2880,7 +2880,7 @@ namespace ImGui
     IMGUI_API void          SetHoveredID(ImGuiID id);
     IMGUI_API void          KeepAliveID(ImGuiID id);
     IMGUI_API void          MarkItemEdited(ImGuiID id);     // Mark data associated to given item as "edited", used by IsItemDeactivatedAfterEdit() function.
-    IMGUI_API void          PushOverrideID(ImGuiID id);     // Push given value as-is at the top of the ID stack (whereas PushID combines old and new hashes)
+    IMGUI_API void          PushOverrideID(ImGuiID id);     // Push given value as-is at the top of the id stack (whereas PushID combines old and new hashes)
     IMGUI_API ImGuiID       GetIDWithSeed(const char* str_id_begin, const char* str_id_end, ImGuiID seed);
     IMGUI_API ImGuiID       GetIDWithSeed(int n, ImGuiID seed);
 
@@ -2956,7 +2956,7 @@ namespace ImGui
     // This should be part of a larger set of API: FocusItem(offset = -1), FocusItemByID(id), ActivateItem(offset = -1), ActivateItemByID(id) etc. which are
     // much harder to design and implement than expected. I have a couple of private branches on this matter but it's not simple. For now implementing the easy ones.
     IMGUI_API void          FocusItem();                    // Focus last item (no selection/activation).
-    IMGUI_API void          ActivateItemByID(ImGuiID id);   // Activate an item by ID (button, checkbox, tree node etc.). Activation is queued and processed on the next frame when the item is encountered again.
+    IMGUI_API void          ActivateItemByID(ImGuiID id);   // Activate an item by id (button, checkbox, tree node etc.). Activation is queued and processed on the next frame when the item is encountered again.
 
     // Inputs
     // FIXME: Eventually we should aim to move e.g. IsActiveIdUsingKey() into IsKeyXXX functions.
@@ -2994,7 +2994,7 @@ namespace ImGui
     // [EXPERIMENTAL] Low-Level: Key/Input Ownership
     // - The idea is that instead of "eating" a given input, we can link to an owner id.
     // - Ownership is most often claimed as a result of reacting to a press/down event (but occasionally may be claimed ahead).
-    // - Input queries can then read input by specifying ImGuiKeyOwner_Any (== 0), ImGuiKeyOwner_None (== -1) or a custom ID.
+    // - Input queries can then read input by specifying ImGuiKeyOwner_Any (== 0), ImGuiKeyOwner_None (== -1) or a custom id.
     // - Legacy input queries (without specifying an owner or _Any or _None) are equivalent to using ImGuiKeyOwner_Any (== 0).
     // - Input ownership is automatically released on the frame after a key is released. Therefore:
     //   - for ownership registration happening as a result of a down/press event, the SetKeyOwner() call may be done once (common case).
@@ -3031,7 +3031,7 @@ namespace ImGui
     // - Routes are resolved during NewFrame(): if keyboard modifiers are matching current ones: SetKeyOwner() is called + route is granted for the frame.
     // - Route is granted to a single owner. When multiple requests are made we have policies to select the winning route.
     // - Multiple read sites may use the same owner id and will all get the granted route.
-    // - For routing: when owner_id is 0 we use the current Focus Scope ID as a default owner in order to identify our location.
+    // - For routing: when owner_id is 0 we use the current Focus Scope id as a default owner in order to identify our location.
     IMGUI_API bool              Shortcut(ImGuiKeyChord key_chord, ImGuiID owner_id = 0, ImGuiInputFlags flags = 0);
     IMGUI_API bool              SetShortcutRouting(ImGuiKeyChord key_chord, ImGuiID owner_id = 0, ImGuiInputFlags flags = 0);
     IMGUI_API bool              TestShortcutRouting(ImGuiKeyChord key_chord, ImGuiID owner_id);
@@ -3044,7 +3044,7 @@ namespace ImGui
     //   So in order to identify a set multiple lists in same window may each need a focus scope.
     //   If you imagine an hypothetical BeginSelectionGroup()/EndSelectionGroup() api, it would likely call PushFocusScope()/EndFocusScope()
     // - Shortcut routing also use focus scope as a default location identifier if an owner is not provided.
-    // We don't use the ID Stack for this as it is common to want them separate.
+    // We don't use the id Stack for this as it is common to want them separate.
     IMGUI_API void          PushFocusScope(ImGuiID id);
     IMGUI_API void          PopFocusScope();
     inline ImGuiID          GetCurrentFocusScope() { ImGuiContext& g = *GImGui; return g.CurrentFocusScopeId; }   // Focus scope we are outputting into, set by PushFocusScope()

@@ -564,7 +564,7 @@ bool ImGui::ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool
                     if (flags & ImGuiButtonFlags_NoHoldingActiveId)
                         ClearActiveID();
                     else
-                        SetActiveID(id, window); // Hold on ID
+                        SetActiveID(id, window); // Hold on id
                     if (!(flags & ImGuiButtonFlags_NoNavFocus))
                         SetFocusID(id, window);
                     g.ActiveIdMouseButton = mouse_button_clicked;
@@ -734,7 +734,7 @@ bool ImGui::SmallButton(const char* label)
     return pressed;
 }
 
-// Tip: use ImGui::PushID()/PopID() to push indices or pointers in the ID stack.
+// Tip: use ImGui::PushID()/PopID() to push indices or pointers in the id stack.
 // Then you can keep 'str_id' empty or the same for all your buttons (instead of creating a string based on a non-string id)
 bool ImGui::InvisibleButton(const char* str_id, const ImVec2& size_arg, ImGuiButtonFlags flags)
 {
@@ -1070,7 +1070,7 @@ bool ImGui::ImageButton(const char* str_id, ImTextureID user_texture_id, const I
 
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 // Legacy API obsoleted in 1.89. Two differences with new ImageButton()
-// - new ImageButton() requires an explicit 'const char* str_id'    Old ImageButton() used opaque imTextureId (created issue with: multiple buttons with same image, transient texture id values, opaque computation of ID)
+// - new ImageButton() requires an explicit 'const char* str_id'    Old ImageButton() used opaque imTextureId (created issue with: multiple buttons with same image, transient texture id values, opaque computation of id)
 // - new ImageButton() always use style.FramePadding                Old ImageButton() had an override argument.
 // If you need to change padding with new ImageButton() you can use PushStyleVar(ImGuiStyleVar_FramePadding, value), consistent with other Button functions.
 bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col)
@@ -1080,7 +1080,7 @@ bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const I
     if (window->SkipItems)
         return false;
 
-    // Default to using texture ID as ID. User can still push string/integer prefixes.
+    // Default to using texture id as id. User can still push string/integer prefixes.
     PushID((void*)(intptr_t)user_texture_id);
     const ImGuiID id = window->GetID("#image");
     PopID();
@@ -1526,8 +1526,8 @@ void ImGui::SeparatorText(const char* label)
         return;
 
     // The SeparatorText() vs SeparatorTextEx() distinction is designed to be considerate that we may want:
-    // - allow separator-text to be draggable items (would require a stable ID + a noticeable highlight)
-    // - this high-level entry point to allow formatting? (which in turns may require ID separate from formatted string)
+    // - allow separator-text to be draggable items (would require a stable id + a noticeable highlight)
+    // - this high-level entry point to allow formatting? (which in turns may require id separate from formatted string)
     // - because of this we probably can't turn 'const char* label' into 'const char* fmt, ...'
     // Otherwise, we can decide that users wanting to drag this would layout a dedicated drag-item,
     // and then we can turn this into a format function.
@@ -3473,7 +3473,7 @@ bool ImGui::InputScalar(const char* label, ImGuiDataType data_type, void* p_data
         BeginGroup(); // The only purpose of the group here is to allow the caller to query item data e.g. IsItemActive()
         PushID(label);
         SetNextItemWidth(ImMax(1.0f, CalcItemWidth() - (button_size + style.ItemInnerSpacing.x) * 2));
-        if (InputText("", buf, IM_ARRAYSIZE(buf), flags)) // PushId(label) + "" gives us the expected ID from outside point of view
+        if (InputText("", buf, IM_ARRAYSIZE(buf), flags)) // PushId(label) + "" gives us the expected id from outside point of view
             value_changed = DataTypeApplyFromText(buf, data_type, p_data, format);
         IMGUI_TEST_ENGINE_ITEM_INFO(g.LastItemData.ID, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Inputable);
 
@@ -4759,7 +4759,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         ImStrncpy(buf, apply_new_text, ImMin(apply_new_text_length + 1, buf_size));
     }
 
-    // Release active ID at the end of the function (so e.g. pressing Return still does a final application of the value)
+    // Release active id at the end of the function (so e.g. pressing Return still does a final application of the value)
     // Otherwise request text input ahead for next frame.
     if (g.ActiveId == id && clear_active_id)
         ClearActiveID();
@@ -5340,7 +5340,7 @@ bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flag
     if (picker_active_window && g.ActiveId != 0 && g.ActiveIdWindow == picker_active_window)
         g.LastItemData.ID = g.ActiveId;
 
-    if (value_changed && g.LastItemData.ID != 0) // In case of ID collision, the second EndGroup() won't catch g.ActiveId
+    if (value_changed && g.LastItemData.ID != 0) // In case of id collision, the second EndGroup() won't catch g.ActiveId
         MarkItemEdited(g.LastItemData.ID);
 
     return value_changed;
@@ -5727,7 +5727,7 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
 
     if (value_changed && memcmp(backup_initial_col, col, components * sizeof(float)) == 0)
         value_changed = false;
-    if (value_changed && g.LastItemData.ID != 0) // In case of ID collision, the second EndGroup() won't catch g.ActiveId
+    if (value_changed && g.LastItemData.ID != 0) // In case of id collision, the second EndGroup() won't catch g.ActiveId
         MarkItemEdited(g.LastItemData.ID);
 
     if (set_current_color_edit_id)
@@ -6387,7 +6387,7 @@ void ImGui::SetNextItemOpen(bool is_open, ImGuiCond cond)
     g.NextItemData.OpenCond = cond ? cond : ImGuiCond_Always;
 }
 
-// CollapsingHeader returns true when opened but do not indent nor push into the ID stack (because of the ImGuiTreeNodeFlags_NoTreePushOnOpen flag).
+// CollapsingHeader returns true when opened but do not indent nor push into the id stack (because of the ImGuiTreeNodeFlags_NoTreePushOnOpen flag).
 // This is basically the same as calling TreeNodeEx(label, ImGuiTreeNodeFlags_CollapsingHeader). You can remove the _NoTreePushOnOpen flag if you want behavior closer to normal TreeNode().
 bool ImGui::CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags)
 {
@@ -6442,7 +6442,7 @@ bool ImGui::CollapsingHeader(const char* label, bool* p_visible, ImGuiTreeNodeFl
 //-------------------------------------------------------------------------
 
 // Tip: pass a non-visible label (e.g. "##hello") then you can use the space to draw other text or image.
-// But you need to make sure the ID is unique, e.g. enclose calls in PushID/PopID or use ##unique_id.
+// But you need to make sure the id is unique, e.g. enclose calls in PushID/PopID or use ##unique_id.
 // With this scheme, ImGuiSelectableFlags_SpanAllColumns and ImGuiSelectableFlags_AllowOverlap are also frequently used flags.
 // FIXME: Selectable() with (size.x == 0.0f) and (SelectableTextAlign.x > 0.0f) followed by SameLine() is currently not supported.
 bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg)
@@ -7122,13 +7122,13 @@ static bool IsRootOfOpenMenuSet()
         return false;
 
     // Initially we used 'upper_popup->OpenParentId == window->IDStack.back()' to differentiate multiple menu sets from each others
-    // (e.g. inside menu bar vs loose menu items) based on parent ID.
+    // (e.g. inside menu bar vs loose menu items) based on parent id.
     // This would however prevent the use of e.g. PushID() user code submitting menus.
     // Previously this worked between popup and a first child menu because the first child menu always had the _ChildWindow flag,
     // making hovering on parent popup possible while first child menu was focused - but this was generally a bug with other side effects.
     // Instead we don't treat Popup specifically (in order to consistently support menu features in them), maybe the first child menu of a Popup
     // doesn't have the _ChildWindow flag, and we rely on this IsRootOfOpenMenuSet() check to allow hovering between root window/popup and first child menu.
-    // In the end, lack of ID check made it so we could no longer differentiate between separate menu sets. To compensate for that, we at least check parent window nav layer.
+    // In the end, lack of id check made it so we could no longer differentiate between separate menu sets. To compensate for that, we at least check parent window nav layer.
     // This fixes the most common case of menu opening on hover when moving between window content and menu bar. Multiple different menu sets in same nav layer would still
     // open on hover, but that should be a lesser problem, because if such menus are close in proximity in window content then it won't feel weird and if they are far apart
     // it likely won't be a problem anyone runs into.
@@ -7155,7 +7155,7 @@ bool ImGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
     if (window->Flags & ImGuiWindowFlags_ChildMenu)
         window_flags |= ImGuiWindowFlags_ChildWindow;
 
-    // If a menu with same the ID was already submitted, we will append to it, matching the behavior of Begin().
+    // If a menu with same the id was already submitted, we will append to it, matching the behavior of Begin().
     // We are relying on a O(N) search - so O(N log N) over the frame - which seems like the most efficient for the expected small amount of BeginMenu() calls per frame.
     // If somehow this is ever becoming a problem we can switch to use e.g. ImGuiStorage mapping key to last frame used.
     if (g.MenusIdSubmittedThisFrame.contains(id))
@@ -7167,7 +7167,7 @@ bool ImGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
         return menu_is_open;
     }
 
-    // Tag menu as used. Next time BeginMenu() with same ID is called it will append to existing menu
+    // Tag menu as used. Next time BeginMenu() with same id is called it will append to existing menu
     g.MenusIdSubmittedThisFrame.push_back(id);
 
     ImVec2 label_size = CalcTextSize(label, NULL, true);
@@ -7902,7 +7902,7 @@ static void ImGui::TabBarLayout(ImGuiTabBar* tab_bar)
     window->DC.IdealMaxPos.x = ImMax(window->DC.IdealMaxPos.x, tab_bar->BarRect.Min.x + tab_bar->WidthAllTabsIdeal);
 }
 
-// Dockable windows uses Name/ID in the global namespace. Non-dockable items use the ID stack.
+// Dockable windows uses Name/id in the global namespace. Non-dockable items use the id stack.
 static ImU32   ImGui::TabBarCalcTabID(ImGuiTabBar* tab_bar, const char* label, ImGuiWindow* docked_window)
 {
     IM_ASSERT(docked_window == NULL); // master branch only
@@ -8244,7 +8244,7 @@ bool    ImGui::BeginTabItem(const char* label, bool* p_open, ImGuiTabItemFlags f
     if (ret && !(flags & ImGuiTabItemFlags_NoPushId))
     {
         ImGuiTabItem* tab = &tab_bar->Tabs[tab_bar->LastTabItemIdx];
-        PushOverrideID(tab->ID); // We already hashed 'label' so push into the ID stack directly instead of doing another hash through PushID(label)
+        PushOverrideID(tab->ID); // We already hashed 'label' so push into the id stack directly instead of doing another hash through PushID(label)
     }
     return ret;
 }
@@ -8302,7 +8302,7 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
     const ImGuiID id = TabBarCalcTabID(tab_bar, label, docked_window);
 
     // If the user called us with *p_open == false, we early out and don't render.
-    // We make a call to ItemAdd() so that attempts to use a contextual popup menu with an implicit ID won't use an older ID.
+    // We make a call to ItemAdd() so that attempts to use a contextual popup menu with an implicit id won't use an older id.
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags);
     if (p_open && !*p_open)
     {

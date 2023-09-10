@@ -4,9 +4,9 @@
 Item::Item() {
 	this->name = "INVALID ITEM";
     this->description = "INVALID ITEM";
-    this->ID = 0;
+    this->id = 0;
     this->icon = 0;
-	this->talent = Talent();
+	this->talent = Talent::INVALID;
 }
 
 Item::Item(pugi::xml_node item) {
@@ -16,7 +16,7 @@ Item::Item(pugi::xml_node item) {
 	this->resourcePath = readString(item, "ResourcePath");
 	this->group = readString(item, "Group");
 	// Read ints
-	this->ID = readInt(item, "ID");
+	this->id = readInt(item, "ID");
 	this->icon = readInt(item, "Icon");
 	this->itemLevel = readInt(item, "ItemLevel");
 	this->requiredLevel = readInt(item, "RequiredLevel");
@@ -48,7 +48,7 @@ TexLocation Item::getTextureLocation() const {
 }
 
 std::string Item::toString() const {
-	return std::format("{0} (ID: {1}) - {2}", this->name, this->ID, this->description);
+	return std::format("{0} (ID: {1}) - {2}", this->name, this->id, this->description);
 }
 
 bool Item::match(std::string search) const {

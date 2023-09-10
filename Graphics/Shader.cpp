@@ -10,7 +10,7 @@ bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D
 	if (FAILED(hr)) {
 		std::wstring errMsg = L"Failed to load shader at ";
 		errMsg += shaderPath;
-		Logger::Log(hr, errMsg);
+		ErrorLogger::Log(hr, errMsg);
 		return false;
 	}
 
@@ -24,7 +24,7 @@ bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D
 	if (FAILED(hr)) {
 		std::wstring errMsg = L"Failed to compile vertex shader at ";
 		errMsg += shaderPath;
-		Logger::Log(hr, errMsg);
+		ErrorLogger::Log(hr, errMsg);
 		return false;
 	}
 
@@ -38,7 +38,7 @@ bool VertexShader::Initialize(ID3D11Device* device, std::wstring shaderPath, D3D
 	);
 
 	if (FAILED(hr)) {
-		Logger::Log(hr, "Failed to create input layout");
+		ErrorLogger::Log(hr, "Failed to create input layout");
 		return false;
 	}
 
@@ -68,7 +68,7 @@ bool PixelShader::Initialize(ID3D11Device* device, std::filesystem::path shaderP
 	if (FAILED(hr)) {
 		std::wstring errMsg = L"Failed to load shader at ";
 		errMsg += shaderPath;
-		Logger::Log(hr, errMsg);
+		ErrorLogger::Log(hr, errMsg);
 		return false;
 	}
 
@@ -83,7 +83,7 @@ bool PixelShader::Initialize(ID3D11Device* device, std::filesystem::path shaderP
 	if (FAILED(hr)) {
 		std::wstring errMsg = L"Failed to compile pixel shader at ";
 		errMsg += shaderPath;
-		Logger::Log(hr, errMsg);
+		ErrorLogger::Log(hr, errMsg);
 		return false;
 	}
 	return true;

@@ -5,12 +5,16 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScintillatingMares", "ScintillatingMares.vcxproj", "{E5B6D73F-0F49-4AD9-BB75-8B5A4A729022}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TwilightsExam", "..\TwilightsExam\TwilightsExam.vcxproj", "{3B54E902-3BD1-4A67-B30C-D305E35A82FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		Test|x64 = Test|x64
+		Test|x86 = Test|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E5B6D73F-0F49-4AD9-BB75-8B5A4A729022}.Debug|x64.ActiveCfg = Debug|x64
@@ -21,6 +25,22 @@ Global
 		{E5B6D73F-0F49-4AD9-BB75-8B5A4A729022}.Release|x64.Build.0 = Release|x64
 		{E5B6D73F-0F49-4AD9-BB75-8B5A4A729022}.Release|x86.ActiveCfg = Release|Win32
 		{E5B6D73F-0F49-4AD9-BB75-8B5A4A729022}.Release|x86.Build.0 = Release|Win32
+		{E5B6D73F-0F49-4AD9-BB75-8B5A4A729022}.Test|x64.ActiveCfg = Test|x64
+		{E5B6D73F-0F49-4AD9-BB75-8B5A4A729022}.Test|x64.Build.0 = Test|x64
+		{E5B6D73F-0F49-4AD9-BB75-8B5A4A729022}.Test|x86.ActiveCfg = Test|Win32
+		{E5B6D73F-0F49-4AD9-BB75-8B5A4A729022}.Test|x86.Build.0 = Test|Win32
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Debug|x64.ActiveCfg = Debug|x64
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Debug|x64.Build.0 = Debug|x64
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Debug|x86.ActiveCfg = Debug|Win32
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Debug|x86.Build.0 = Debug|Win32
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Release|x64.ActiveCfg = Release|x64
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Release|x64.Build.0 = Release|x64
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Release|x86.ActiveCfg = Release|Win32
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Release|x86.Build.0 = Release|Win32
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Test|x64.ActiveCfg = Release|x64
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Test|x64.Build.0 = Release|x64
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Test|x86.ActiveCfg = Test|Win32
+		{3B54E902-3BD1-4A67-B30C-D305E35A82FC}.Test|x86.Build.0 = Test|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

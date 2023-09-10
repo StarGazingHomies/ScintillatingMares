@@ -85,6 +85,7 @@ void Graphics::RenderFrame() {
 
 	for (Item item : fm.searchItems(std::string(str0))) {
 		ImGui::Text(item.name.c_str());
+		//ImGui::Button(item.name.c_str());
 	}
 
 	ImGui::End();
@@ -107,20 +108,20 @@ void Graphics::RenderFrame() {
 	//	HRESULT hr;
 	//	hr = this->pSwapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
 	//	if (FAILED(hr)) {
-	//		Logger::Log(hr, "Failed to resize swapchain buffers");
+	//		ErrorLogger::Log(hr, "Failed to resize swapchain buffers");
 	//		return;
 	//	}
 
 	//	ID3D11Texture2D* pBuffer;
 	//	hr = this->pSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBuffer);
 	//	if (FAILED(hr)) {
-	//		Logger::Log(hr, "Failed to get swapchain buffer");
+	//		ErrorLogger::Log(hr, "Failed to get swapchain buffer");
 	//		return;
 	//	}
 
 	//	hr = this->pDevice->CreateRenderTargetView(pBuffer, NULL, &this->pRenderTargetView);
 	//	if (FAILED(hr)) {
-	//		Logger::Log(hr, "Failed to create render target view");
+	//		ErrorLogger::Log(hr, "Failed to create render target view");
 	//	}
 	//	pBuffer->Release();
 	//	
@@ -162,7 +163,7 @@ bool Graphics::LinkDirectX(IDXGISwapChain* pSwapchain) {
 
 	HRESULT hr = pSwapchain->GetDevice(__uuidof(ID3D11Device), (void**)&this->pDevice);
 	if (FAILED(hr)) {
-		Logger::Log(hr, "Failed to get D3D device");
+		ErrorLogger::Log(hr, "Failed to get D3D device");
 		return false;
 	}
 
@@ -173,13 +174,13 @@ bool Graphics::LinkDirectX(IDXGISwapChain* pSwapchain) {
 	// This will probably never happen with a real game but maybe certain test environments... :P
 	if (!pRenderTargetView)
 	{
-		Logger::Log("Failed to get render target, creating our own backup.");
+		ErrorLogger::Log("Failed to get render target, creating our own backup.");
 
 		// Get a pointer to the back buffer for the render target view
 		ID3D11Texture2D* pBackbuffer = nullptr;
 		hr = pSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackbuffer));
 		if (FAILED(hr)) {
-			Logger::Log(hr, "Failed to get back buffer");
+			ErrorLogger::Log(hr, "Failed to get back buffer");
 			return false;
 		}
 
@@ -187,7 +188,7 @@ bool Graphics::LinkDirectX(IDXGISwapChain* pSwapchain) {
 		hr = pDevice->CreateRenderTargetView(pBackbuffer, nullptr, &pRenderTargetView);
 		pBackbuffer->Release();
 		if (FAILED(hr)) {
-			Logger::Log(hr, "Failed to create render target view");
+			ErrorLogger::Log(hr, "Failed to create render target view");
 			return false;
 		}
 
@@ -242,7 +243,7 @@ bool Graphics::InitDirectX()
 	HRESULT hr = this->pDevice->CreateRasterizerState(&rasterizerDesc, &this->pRasterizerState);
 
 	if (FAILED(hr)) {
-		Logger::Log(hr, "Failed to create rasterizer state.");
+		ErrorLogger::Log(hr, "Failed to create rasterizer state.");
 		return false;
 	}
 
@@ -262,7 +263,7 @@ bool Graphics::InitDirectX()
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	hr = this->pDevice->CreateSamplerState(&samplerDesc, &this->samplerState);
 	if (FAILED(hr)) {
-		Logger::Log(hr, "Failed to create sampler state.");
+		ErrorLogger::Log(hr, "Failed to create sampler state.");
 		return false;
 	}
 
@@ -274,7 +275,7 @@ bool Graphics::InitializeShaders() {
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{
 			"POSITION", // Name
-			0,  // ID
+			0,  // id
 			DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, // Format
 			0,  // Input slot
 			0,  // Offset
@@ -283,7 +284,7 @@ bool Graphics::InitializeShaders() {
 		},
 		{
 			"TEXCOORD", // Name
-			0,  // ID
+			0,  // id
 			DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, // Format
 			0,  // Input slot
 			D3D11_APPEND_ALIGNED_ELEMENT,  // Offset
@@ -323,35 +324,35 @@ bool Graphics::InitializeScene() {
 	// Vertex buffer
 	HRESULT hr = this->vertexBuffer.initialize(this->pDevice, v, ARRAYSIZE(v));
 	if (FAILED(hr)) {
-		Logger::Log(hr, "Failed to create vertex buffer.");
+		ErrorLogger::Log(hr, "Failed to create vertex buffer.");
 		return false;
 	}
 
 	// Index buffer
 	hr = this->indexBuffer.initialize(this->pDevice, indices, ARRAYSIZE(indices));
 	if (FAILED(hr)) {
-		Logger::Log(hr, "Failed to create index buffer.");
+		ErrorLogger::Log(hr, "Failed to create index buffer.");
 		return false;
 	}
 
 	// Texture
 	hr = CoInitialize(NULL);
 	if (FAILED(hr)) {
-		Logger::Log(hr, "Failed to coinitialize.");
+		ErrorLogger::Log(hr, "Failed to coinitialize.");
 		return false;
 	}
 
 	std::filesystem::path textureLocation = getDllPath().parent_path() / "Resource" / "Textures" / "atlas.png";
 	hr = DirectX::CreateWICTextureFromFile(this->pDevice, textureLocation.c_str(), nullptr, &itemsTexture);
 	if (FAILED(hr)) {
-		Logger::Log(hr, "Failed to create texture atlas.png.");
+		ErrorLogger::Log(hr, "Failed to create texture atlas.png.");
 		return false;
 	}
 	
 	// Constant buffer
 	hr = this->constantBuffer.Initialize(pDevice, pContext);
 	if (FAILED(hr)) {
-		Logger::Log(hr, "Failed to create constant buffer.");
+		ErrorLogger::Log(hr, "Failed to create constant buffer.");
 		return false;
 	}
 

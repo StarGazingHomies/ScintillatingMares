@@ -33,7 +33,7 @@ public:
 	// also ugh items have so much data!
 
 public:
-	int ID;
+	int id;
 	int icon;
 	int itemLevel;
 	Talent talent;

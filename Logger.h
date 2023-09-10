@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include "PugiXML/pugixml.hpp"
 
-class Logger
+class ErrorLogger
 {
 public:
 	static void Log(std::string message);

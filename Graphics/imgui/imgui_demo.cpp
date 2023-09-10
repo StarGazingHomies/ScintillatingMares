@@ -606,7 +606,7 @@ static void ShowDemoWindowWidgets()
         ImGui::RadioButton("radio b", &e, 1); ImGui::SameLine();
         ImGui::RadioButton("radio c", &e, 2);
 
-        // Color buttons, demonstrate using PushID() to add unique identifier in the ID stack, and changing style.
+        // Color buttons, demonstrate using PushID() to add unique identifier in the id stack, and changing style.
         IMGUI_DEMO_MARKER("Widgets/Basic/Buttons (Colored)");
         for (int i = 0; i < 7; i++)
         {
@@ -3492,7 +3492,7 @@ static void ShowDemoWindowPopups()
         static bool toggles[] = { true, false, false, false, false };
 
         // Simple selection popup (if you want to show the current selection inside the Button itself,
-        // you may want to build a string using the "###" operator to preserve a constant ID with a variable label)
+        // you may want to build a string using the "###" operator to preserve a constant id with a variable label)
         if (ImGui::Button("Select.."))
             ImGui::OpenPopup("my_select_popup");
         ImGui::SameLine();
@@ -3588,8 +3588,8 @@ static void ShowDemoWindowPopups()
         // See more details in BeginPopupContextItem().
 
         // Example 1
-        // When used after an item that has an ID (e.g. Button), we can skip providing an ID to BeginPopupContextItem(),
-        // and BeginPopupContextItem() will use the last item ID as the popup ID.
+        // When used after an item that has an id (e.g. Button), we can skip providing an id to BeginPopupContextItem(),
+        // and BeginPopupContextItem() will use the last item id as the popup id.
         {
             const char* names[5] = { "Label1", "Label2", "Label3", "Label4", "Label5" };
             static int selected = -1;
@@ -3637,14 +3637,14 @@ static void ShowDemoWindowPopups()
         }
 
         // Example 3
-        // When using BeginPopupContextItem() with an implicit identifier (NULL == use last item ID),
+        // When using BeginPopupContextItem() with an implicit identifier (NULL == use last item id),
         // we need to make sure your item identifier is stable.
         // In this example we showcase altering the item label while preserving its identifier, using the ### operator (see FAQ).
         {
             HelpMarker("Showcase using a popup ID linked to item ID, with the item having a changing label + stable ID using the ### operator.");
             static char name[32] = "Label1";
             char buf[64];
-            sprintf(buf, "Button: %s###Button", name); // ### operator override ID ignoring the preceding label
+            sprintf(buf, "Button: %s###Button", name); // ### operator override id ignoring the preceding label
             ImGui::Button(buf);
             if (ImGui::BeginPopupContextItem())
             {
@@ -3760,7 +3760,7 @@ namespace
 // We are passing our own identifier to TableSetupColumn() to facilitate identifying columns in the sorting code.
 // This identifier will be passed down into ImGuiTableSortSpec::ColumnUserID.
 // But it is possible to omit the user id parameter of TableSetupColumn() and just use the column index instead! (ImGuiTableSortSpec::ColumnIndex)
-// If you don't use sorting, you will generally never care about giving column an ID!
+// If you don't use sorting, you will generally never care about giving column an id!
 enum MyItemColumnID
 {
     MyItemColumnID_ID,
@@ -5221,7 +5221,7 @@ static void ShowDemoWindowTables()
         ImGui::TreePop();
     }
 
-    // Demonstrate creating multiple tables with the same ID
+    // Demonstrate creating multiple tables with the same id
     if (open_action != -1)
         ImGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Synced instances");
@@ -7291,7 +7291,7 @@ static void ShowExampleAppLayout(bool* p_open)
 
 static void ShowPlaceholderObject(const char* prefix, int uid)
 {
-    // Use object uid as identifier. Most commonly you could also use the object pointer as a base ID.
+    // Use object uid as identifier. Most commonly you could also use the object pointer as a base id.
     ImGui::PushID(uid);
 
     // Text and Tree nodes are less high than framed widgets, using AlignTextToFramePadding() we add vertical spacing to make the tree lines equal high.
@@ -7639,7 +7639,7 @@ static void ShowExampleAppFullscreen(bool* p_open)
 // [SECTION] Example App: Manipulating Window Titles / ShowExampleAppWindowTitles()
 //-----------------------------------------------------------------------------
 
-// Demonstrate the use of "##" and "###" in identifiers to manipulate ID generation.
+// Demonstrate the use of "##" and "###" in identifiers to manipulate id generation.
 // This applies to all regular items as well.
 // Read FAQ section "How can I have multiple widgets with the same label?" for details.
 static void ShowExampleAppWindowTitles(bool*)
@@ -7648,7 +7648,7 @@ static void ShowExampleAppWindowTitles(bool*)
     const ImVec2 base_pos = viewport->Pos;
 
     // By default, Windows are uniquely identified by their title.
-    // You can use the "##" and "###" markers to manipulate the display/ID.
+    // You can use the "##" and "###" markers to manipulate the display/id.
 
     // Using "##" to display same title but have unique identifier.
     ImGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 100), ImGuiCond_FirstUseEver);

@@ -486,7 +486,7 @@ CODE
  - 2022/08/03 (1.89) - changed signature of ImageButton() function. Kept redirection function (will obsolete).
                         - added 'const char* str_id' parameter + removed 'int frame_padding = -1' parameter.
                         - old signature: bool ImageButton(ImTextureID tex_id, ImVec2 size, ImVec2 uv0 = ImVec2(0,0), ImVec2 uv1 = ImVec2(1,1), int frame_padding = -1, ImVec4 bg_col = ImVec4(0,0,0,0), ImVec4 tint_col = ImVec4(1,1,1,1));
-                          - used the ImTextureID value to create an ID. This was inconsistent with other functions, led to ID conflicts, and caused problems with engines using transient ImTextureID values.
+                          - used the ImTextureID value to create an id. This was inconsistent with other functions, led to id conflicts, and caused problems with engines using transient ImTextureID values.
                           - had a FramePadding override which was inconsistent with other functions and made the already-long signature even longer.
                         - new signature: bool ImageButton(const char* str_id, ImTextureID tex_id, ImVec2 size, ImVec2 uv0 = ImVec2(0,0), ImVec2 uv1 = ImVec2(1,1), ImVec4 bg_col = ImVec4(0,0,0,0), ImVec4 tint_col = ImVec4(1,1,1,1));
                           - requires an explicit identifier. You may still use e.g. PushID() calls and then pass an empty identifier.
@@ -597,7 +597,7 @@ CODE
  - 2020/06/23 (1.77) - removed BeginPopupContextWindow(const char*, int mouse_button, bool also_over_items) in favor of BeginPopupContextWindow(const char*, ImGuiPopupFlags flags) with ImGuiPopupFlags_NoOverItems.
  - 2020/06/15 (1.77) - renamed OpenPopupOnItemClick() to OpenPopupContextItem(). Kept inline redirection function (will obsolete). [NOTE: THIS WAS REVERTED IN 1.79]
  - 2020/06/15 (1.77) - removed CalcItemRectClosestPoint() entry point which was made obsolete and asserting in December 2017.
- - 2020/04/23 (1.77) - removed unnecessary ID (first arg) of ImFontAtlas::AddCustomRectRegular().
+ - 2020/04/23 (1.77) - removed unnecessary id (first arg) of ImFontAtlas::AddCustomRectRegular().
  - 2020/01/22 (1.75) - ImDrawList::AddCircle()/AddCircleFilled() functions don't accept negative radius any more.
  - 2019/12/17 (1.75) - [undid this change in 1.76] made Columns() limited to 64 columns by asserting above that limit. While the current code technically supports it, future code may not so we're putting the restriction ahead.
  - 2019/12/13 (1.75) - [imgui_internal.h] changed ImRect() default constructor initializes all fields to 0.0f instead of (FLT_MAX,FLT_MAX,-FLT_MAX,-FLT_MAX). If you used ImRect::Add() to create bounding boxes by adding multiple points into it, you may need to fix your initial value.
@@ -613,7 +613,7 @@ CODE
                        - IMGUI_DISABLE_TEST_WINDOWS          -> use IMGUI_DISABLE_DEMO_WINDOWS
  - 2019/12/08 (1.75) - obsoleted calling ImDrawList::PrimReserve() with a negative count (which was vaguely documented and rarely if ever used). Instead, we added an explicit PrimUnreserve() API.
  - 2019/12/06 (1.75) - removed implicit default parameter to IsMouseDragging(int button = 0) to be consistent with other mouse functions (none of the other functions have it).
- - 2019/11/21 (1.74) - ImFontAtlas::AddCustomRectRegular() now requires an ID larger than 0x110000 (instead of 0x10000) to conform with supporting Unicode planes 1-16 in a future update. ID below 0x110000 will now assert.
+ - 2019/11/21 (1.74) - ImFontAtlas::AddCustomRectRegular() now requires an id larger than 0x110000 (instead of 0x10000) to conform with supporting Unicode planes 1-16 in a future update. id below 0x110000 will now assert.
  - 2019/11/19 (1.74) - renamed IMGUI_DISABLE_FORMAT_STRING_FUNCTIONS to IMGUI_DISABLE_DEFAULT_FORMAT_FUNCTIONS for consistency.
  - 2019/11/19 (1.74) - renamed IMGUI_DISABLE_MATH_FUNCTIONS to IMGUI_DISABLE_DEFAULT_MATH_FUNCTIONS for consistency.
  - 2019/10/22 (1.74) - removed redirecting functions/enums that were marked obsolete in 1.52 (October 2017):
@@ -871,7 +871,7 @@ CODE
  Q&A: Usage
  ----------
 
- Q: About the ID Stack system..
+ Q: About the id Stack system..
    - Why is my widget not reacting when I click on it?
    - How can I have widgets with an empty label?
    - How can I have multiple widgets with the same label?
@@ -2387,7 +2387,7 @@ void ImGuiStorage::BuildSortByKey()
     {
         static int IMGUI_CDECL PairComparerByID(const void* lhs, const void* rhs)
         {
-            // We can't just do a subtraction because qsort uses signed integers and subtracting our ID doesn't play well with that.
+            // We can't just do a subtraction because qsort uses signed integers and subtracting our id doesn't play well with that.
             if (((const ImGuiStoragePair*)lhs)->key > ((const ImGuiStoragePair*)rhs)->key) return +1;
             if (((const ImGuiStoragePair*)lhs)->key < ((const ImGuiStoragePair*)rhs)->key) return -1;
             return 0;
@@ -3789,7 +3789,7 @@ ImGuiID ImGuiWindow::GetID(int n)
     return id;
 }
 
-// This is only used in rare/specific situations to manufacture an ID out of nowhere.
+// This is only used in rare/specific situations to manufacture an id out of nowhere.
 ImGuiID ImGuiWindow::GetIDFromRectangle(const ImRect& r_abs)
 {
     ImGuiID seed = IDStack.back();
@@ -3992,7 +3992,7 @@ static inline float CalcDelayFromHoveredFlags(ImGuiHoveredFlags flags)
 
 // This is roughly matching the behavior of internal-facing ItemHoverable()
 // - we allow hovering to be true when ActiveId==window->MoveID, so that clicking on non-interactive items such as a Text() item still returns true with IsItemHovered()
-// - this should work even for non-interactive items that have no ID, so we cannot use LastItemId
+// - this should work even for non-interactive items that have no id, so we cannot use LastItemId
 bool ImGui::IsItemHovered(ImGuiHoveredFlags flags)
 {
     ImGuiContext& g = *GImGui;
@@ -4572,7 +4572,7 @@ void ImGui::NewFrame()
     for (ImGuiViewportP* viewport : g.Viewports)
         viewport->DrawDataP.Valid = false;
 
-    // Drag and drop keep the source ID alive so even if the source disappear our state is consistent
+    // Drag and drop keep the source id alive so even if the source disappear our state is consistent
     if (g.DragDropActive && g.DragDropPayload.SourceId == g.ActiveId)
         KeepAliveID(g.DragDropPayload.SourceId);
 
@@ -4637,7 +4637,7 @@ void ImGui::NewFrame()
 
     // Record when we have been stationary as this state is preserved while over same item.
     // FIXME: The way this is expressed means user cannot alter HoverStationaryDelay during the frame to use varying values.
-    // To allow this we should store HoverItemMaxStationaryTime+ID and perform the >= check in IsItemHovered() function.
+    // To allow this we should store HoverItemMaxStationaryTime+id and perform the >= check in IsItemHovered() function.
     if (g.HoverItemDelayId != 0 && g.MouseStationaryTimer >= g.Style.HoverStationaryDelay)
         g.HoverItemUnlockedStationaryId = g.HoverItemDelayId;
     else if (g.HoverItemDelayId == 0)
@@ -5384,7 +5384,7 @@ bool ImGui::BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, b
         size.y = ImMax(content_avail.y + size.y, 4.0f);
     SetNextWindowSize(size);
 
-    // Build up name. If you need to append to a same child from multiple location in the ID stack, use BeginChild(ImGuiID id) with a stable value.
+    // Build up name. If you need to append to a same child from multiple location in the id stack, use BeginChild(ImGuiID id) with a stable value.
     const char* temp_window_name;
     if (name)
         ImFormatStringToTempBuffer(&temp_window_name, NULL, "%s/%s_%08X", parent_window->Name, name, id);
@@ -6376,7 +6376,7 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
         if (window->MemoryCompacted)
             GcAwakeTransientWindowBuffers(window);
 
-        // Update stored window name when it changes (which can _only_ happen with the "###" operator, so the ID would stay unchanged).
+        // Update stored window name when it changes (which can _only_ happen with the "###" operator, so the id would stay unchanged).
         // The title bar always display the 'name' parameter, so we only update the string storage if it needs to be visible to the end-user elsewhere.
         bool window_title_visible_elsewhere = false;
         if (g.NavWindowingListWindow != NULL && (window->Flags & ImGuiWindowFlags_NoNavFocus) == 0)   // Window titles visible when using CTRL+TAB
@@ -6580,7 +6580,7 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
         if (g.TestEngineHookItems)
         {
             IM_ASSERT(window->IDStack.Size == 1);
-            window->IDStack.Size = 0; // As window->IDStack[0] == window->ID here, make sure TestEngine doesn't erroneously see window as parent of itself.
+            window->IDStack.Size = 0; // As window->IDStack[0] == window->id here, make sure TestEngine doesn't erroneously see window as parent of itself.
             IMGUI_TEST_ENGINE_ITEM_ADD(window->ID, window->Rect(), NULL);
             IMGUI_TEST_ENGINE_ITEM_INFO(window->ID, window->Name, (g.HoveredWindow == window) ? ImGuiItemStatusFlags_HoveredRect : 0);
             window->IDStack.Size = 1;
@@ -7766,7 +7766,7 @@ void ImGui::PushID(int int_id)
     window->IDStack.push_back(id);
 }
 
-// Push a given id value ignoring the ID stack as a seed.
+// Push a given id value ignoring the id stack as a seed.
 void ImGui::PushOverrideID(ImGuiID id)
 {
     ImGuiContext& g = *GImGui;
@@ -8999,7 +8999,7 @@ ImGuiID ImGui::GetKeyOwner(ImGuiKey key)
     return owner_id;
 }
 
-// TestKeyOwner(..., ID)   : (owner == None || owner == ID)
+// TestKeyOwner(..., id)   : (owner == None || owner == id)
 // TestKeyOwner(..., None) : (owner == None)
 // TestKeyOwner(..., Any)  : no owner test
 // All paths are also testing for key not being locked, for the rare cases that key have been locked with using ImGuiInputFlags_LockXXX flags.
@@ -9038,7 +9038,7 @@ bool ImGui::TestKeyOwner(ImGuiKey key, ImGuiID owner_id)
 // - SetKeyOwner(..., Any or None, Lock) : set lock
 void ImGui::SetKeyOwner(ImGuiKey key, ImGuiID owner_id, ImGuiInputFlags flags)
 {
-    IM_ASSERT(IsNamedKeyOrModKey(key) && (owner_id != ImGuiKeyOwner_Any || (flags & (ImGuiInputFlags_LockThisFrame | ImGuiInputFlags_LockUntilRelease)))); // Can only use _Any with _LockXXX flags (to eat a key away without an ID to retrieve it)
+    IM_ASSERT(IsNamedKeyOrModKey(key) && (owner_id != ImGuiKeyOwner_Any || (flags & (ImGuiInputFlags_LockThisFrame | ImGuiInputFlags_LockUntilRelease)))); // Can only use _Any with _LockXXX flags (to eat a key away without an id to retrieve it)
     IM_ASSERT((flags & ~ImGuiInputFlags_SupportedBySetKeyOwner) == 0); // Passing flags not supported by this function!
 
     ImGuiContext& g = *GImGui;
@@ -9866,7 +9866,7 @@ void ImGui::EndGroup()
     // If the current ActiveId was declared within the boundary of our group, we copy it to LastItemId so IsItemActive(), IsItemDeactivated() etc. will be functional on the entire group.
     // It would be neater if we replaced window.DC.LastItemId by e.g. 'bool LastItemIsActive', but would put a little more burden on individual widgets.
     // Also if you grep for LastItemId you'll notice it is only used in that context.
-    // (The two tests not the same because ActiveIdIsAlive is an ID itself, in order to be able to handle ActiveId being overwritten during the frame.)
+    // (The two tests not the same because ActiveIdIsAlive is an id itself, in order to be able to handle ActiveId being overwritten during the frame.)
     const bool group_contains_curr_active_id = (group_data.BackupActiveIdIsAlive != g.ActiveId) && (g.ActiveIdIsAlive == g.ActiveId) && g.ActiveId;
     const bool group_contains_prev_active_id = (group_data.BackupActiveIdPreviousFrameIsAlive == false) && (g.ActiveIdPreviousFrameIsAlive == true);
     if (group_contains_curr_active_id)
@@ -10312,7 +10312,7 @@ void ImGui::OpenPopup(ImGuiID id, ImGuiPopupFlags popup_flags)
 
 // Mark popup as open (toggle toward open state).
 // Popups are closed when user click outside, or activate a pressable item, or CloseCurrentPopup() is called within a BeginPopup()/EndPopup() block.
-// Popup identifiers are relative to the current ID-stack (so OpenPopup and BeginPopup needs to be at the same level).
+// Popup identifiers are relative to the current id-stack (so OpenPopup and BeginPopup needs to be at the same level).
 // One open popup per level of the popup hierarchy (NB: when assigning we reset the Window member of ImGuiPopupRef to NULL)
 void ImGui::OpenPopupEx(ImGuiID id, ImGuiPopupFlags popup_flags)
 {
@@ -10573,7 +10573,7 @@ void ImGui::OpenPopupOnItemClick(const char* str_id, ImGuiPopupFlags popup_flags
     int mouse_button = (popup_flags & ImGuiPopupFlags_MouseButtonMask_);
     if (IsMouseReleased(mouse_button) && IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
     {
-        ImGuiID id = str_id ? window->GetID(str_id) : g.LastItemData.ID;    // If user hasn't passed an ID, we can use the LastItemID. Using LastItemID as a Popup ID won't conflict!
+        ImGuiID id = str_id ? window->GetID(str_id) : g.LastItemData.ID;    // If user hasn't passed an id, we can use the LastItemID. Using LastItemID as a Popup id won't conflict!
         IM_ASSERT(id != 0);                                             // You cannot pass a NULL str_id if the last item has no identifier (e.g. a Text() item)
         OpenPopupEx(id, popup_flags);
     }
@@ -10594,14 +10594,14 @@ void ImGui::OpenPopupOnItemClick(const char* str_id, ImGuiPopupFlags popup_flags
 //       if (IsItemHovered() && IsMouseReleased(ImGuiMouseButton_Right))
 //           OpenPopup(id);
 //       return BeginPopup(id);
-//   The main difference being that this is tweaked to avoid computing the ID twice.
+//   The main difference being that this is tweaked to avoid computing the id twice.
 bool ImGui::BeginPopupContextItem(const char* str_id, ImGuiPopupFlags popup_flags)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
     if (window->SkipItems)
         return false;
-    ImGuiID id = str_id ? window->GetID(str_id) : g.LastItemData.ID;    // If user hasn't passed an ID, we can use the LastItemID. Using LastItemID as a Popup ID won't conflict!
+    ImGuiID id = str_id ? window->GetID(str_id) : g.LastItemData.ID;    // If user hasn't passed an id, we can use the LastItemID. Using LastItemID as a Popup id won't conflict!
     IM_ASSERT(id != 0);                                             // You cannot pass a NULL str_id if the last item has no identifier (e.g. a Text() item)
     int mouse_button = (popup_flags & ImGuiPopupFlags_MouseButtonMask_);
     if (IsMouseReleased(mouse_button) && IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
@@ -12351,7 +12351,7 @@ bool ImGui::BeginDragDropSource(ImGuiDragDropFlags flags)
         source_id = g.LastItemData.ID;
         if (source_id != 0)
         {
-            // Common path: items with ID
+            // Common path: items with id
             if (g.ActiveId != source_id)
                 return false;
             if (g.ActiveIdMouseButton != -1)
@@ -12362,7 +12362,7 @@ bool ImGui::BeginDragDropSource(ImGuiDragDropFlags flags)
         }
         else
         {
-            // Uncommon path: items without ID
+            // Uncommon path: items without id
             if (g.IO.MouseDown[mouse_button] == false || window->SkipItems)
                 return false;
             if ((g.LastItemData.StatusFlags & ImGuiItemStatusFlags_HoveredRect) == 0 && (g.ActiveId == 0 || g.ActiveIdWindow != window))
@@ -12376,8 +12376,8 @@ bool ImGui::BeginDragDropSource(ImGuiDragDropFlags flags)
                 return false;
             }
 
-            // Magic fallback to handle items with no assigned ID, e.g. Text(), Image()
-            // We build a throwaway ID based on current ID stack + relative AABB of items in window.
+            // Magic fallback to handle items with no assigned id, e.g. Text(), Image()
+            // We build a throwaway id based on current id stack + relative AABB of items in window.
             // THE IDENTIFIER WON'T SURVIVE ANY REPOSITIONING/RESIZINGG OF THE WIDGET, so if your widget moves your dragging operation will be canceled.
             // We don't need to maintain/call ClearActiveID() as releasing the button will early out this function and trigger !ActiveIdIsAlive.
             // Rely on keeping other window->LastItemXXX fields intact.
@@ -12579,7 +12579,7 @@ const ImGuiPayload* ImGui::AcceptDragDropPayload(const char* type, ImGuiDragDrop
         return NULL;
 
     // Accept smallest drag target bounding box, this allows us to nest drag targets conveniently without ordering constraints.
-    // NB: We currently accept NULL id as target. However, overlapping targets requires a unique ID to function!
+    // NB: We currently accept NULL id as target. However, overlapping targets requires a unique id to function!
     const bool was_accepted_previously = (g.DragDropAcceptIdPrev == g.DragDropTargetId);
     ImRect r = g.DragDropTargetRect;
     float r_surface = r.GetWidth() * r.GetHeight();
@@ -14697,7 +14697,7 @@ void ImGui::DebugDrawItemRect(ImU32 col)
     GetForegroundDrawList(window)->AddRect(g.LastItemData.Rect.Min, g.LastItemData.Rect.Max, col);
 }
 
-// [DEBUG] Locate item position/rectangle given an ID.
+// [DEBUG] Locate item position/rectangle given an id.
 static const ImU32 DEBUG_LOCATE_ITEM_COLOR = IM_COL32(0, 255, 0, 255);  // Green
 
 void ImGui::DebugLocateItem(ImGuiID target_id)
@@ -14776,7 +14776,7 @@ void ImGui::UpdateDebugToolStackQueries()
         return;
 
     // Update queries. The steps are: -1: query Stack, >= 0: query each stack item
-    // We can only perform 1 ID Info query every frame. This is designed so the GetID() tests are cheap and constant-time
+    // We can only perform 1 id Info query every frame. This is designed so the GetID() tests are cheap and constant-time
     const ImGuiID query_id = g.HoveredIdPreviousFrame ? g.HoveredIdPreviousFrame : g.ActiveId;
     if (tool->QueryId != query_id)
     {
@@ -14812,7 +14812,7 @@ void ImGui::DebugHookIdInfo(ImGuiID id, ImGuiDataType data_type, const void* dat
     ImGuiStackTool* tool = &g.DebugStackTool;
 
     // Step 0: stack query
-    // This assumes that the ID was computed with the current ID stack, which tends to be the case for our widget.
+    // This assumes that the id was computed with the current id stack, which tends to be the case for our widget.
     if (tool->StackLevel == -1)
     {
         tool->StackLevel++;
@@ -14856,7 +14856,7 @@ static int StackToolFormatLevelInfo(ImGuiStackTool* tool, int n, bool format_for
 {
     ImGuiStackLevelInfo* info = &tool->Results[n];
     ImGuiWindow* window = (info->Desc[0] == 0 && n == 0) ? ImGui::FindWindowByID(info->ID) : NULL;
-    if (window)                                                                 // Source: window name (because the root ID don't call GetID() and so doesn't get hooked)
+    if (window)                                                                 // Source: window name (because the root id don't call GetID() and so doesn't get hooked)
         return ImFormatString(buf, buf_size, format_for_ui ? "\"%s\" [window]" : "%s", window->Name);
     if (info->QuerySuccess)                                                     // Source: GetID() hooks (prioritize over ItemInfo() because we frequently use patterns like: PushID(str), Button("") where they both have same id)
         return ImFormatString(buf, buf_size, (format_for_ui && info->DataType == ImGuiDataType_String) ? "\"%s\"" : "%s", info->Desc);

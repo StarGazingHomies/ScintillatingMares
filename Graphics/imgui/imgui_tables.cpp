@@ -363,7 +363,7 @@ bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImG
         IM_ASSERT(table->ColumnsCount == columns_count && "BeginTable(): Cannot change columns count mid-frame while preserving same ID");
         if (table->InstanceDataExtra.Size < instance_no)
             table->InstanceDataExtra.push_back(ImGuiTableInstanceData());
-        instance_id = GetIDWithSeed(instance_no, GetIDWithSeed("##Instances", NULL, id)); // Push "##Instances" followed by (int)instance_no in ID stack.
+        instance_id = GetIDWithSeed(instance_no, GetIDWithSeed("##Instances", NULL, id)); // Push "##Instances" followed by (int)instance_no in id stack.
     }
     else
     {
@@ -419,7 +419,7 @@ bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImG
         table->WorkRect = table->OuterRect = table->InnerRect = outer_rect;
     }
 
-    // Push a standardized ID for both child-using and not-child-using tables
+    // Push a standardized id for both child-using and not-child-using tables
     PushOverrideID(id);
     if (instance_no > 0)
         PushOverrideID(instance_id); // FIXME: Somehow this is not resolved by stack-tool, even tho GetIDWithSeed() submitted the symbol.
@@ -558,7 +558,7 @@ bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImG
     if (table->RefScale != 0.0f && table->RefScale != new_ref_scale_unit)
     {
         const float scale_factor = new_ref_scale_unit / table->RefScale;
-        //IMGUI_DEBUG_PRINT("[table] %08X RefScaleUnit %.3f -> %.3f, scaling width by %.3f\n", table->ID, table->RefScaleUnit, new_ref_scale_unit, scale_factor);
+        //IMGUI_DEBUG_PRINT("[table] %08X RefScaleUnit %.3f -> %.3f, scaling width by %.3f\n", table->id, table->RefScaleUnit, new_ref_scale_unit, scale_factor);
         for (int n = 0; n < columns_count; n++)
             table->Columns[n].WidthRequest = table->Columns[n].WidthRequest * scale_factor;
     }
@@ -1640,7 +1640,7 @@ ImRect ImGui::TableGetCellBgRect(const ImGuiTable* table, int column_n)
     return ImRect(x1, table->RowPosY1, x2, table->RowPosY2);
 }
 
-// Return the resizing ID for the right-side of the given column.
+// Return the resizing id for the right-side of the given column.
 ImGuiID ImGui::TableGetColumnResizeID(ImGuiTable* table, int column_n, int instance_no)
 {
     IM_ASSERT(column_n >= 0 && column_n < table->ColumnsCount);
@@ -3534,7 +3534,7 @@ void ImGui::TableSettingsAddSettingsHandler()
 // Remove Table (currently only used by TestEngine)
 void ImGui::TableRemove(ImGuiTable* table)
 {
-    //IMGUI_DEBUG_PRINT("TableRemove() id=0x%08X\n", table->ID);
+    //IMGUI_DEBUG_PRINT("TableRemove() id=0x%08X\n", table->id);
     ImGuiContext& g = *GImGui;
     int table_idx = g.Tables.GetIndex(table);
     //memset(table->RawData.Data, 0, table->RawData.size_in_bytes());
@@ -3546,7 +3546,7 @@ void ImGui::TableRemove(ImGuiTable* table)
 // Free up/compact internal Table buffers for when it gets unused
 void ImGui::TableGcCompactTransientBuffers(ImGuiTable* table)
 {
-    //IMGUI_DEBUG_PRINT("TableGcCompactTransientBuffers() id=0x%08X\n", table->ID);
+    //IMGUI_DEBUG_PRINT("TableGcCompactTransientBuffers() id=0x%08X\n", table->id);
     ImGuiContext& g = *GImGui;
     IM_ASSERT(table->MemoryCompacted == false);
     table->SortSpecs.Specs = NULL;
@@ -3900,7 +3900,7 @@ ImGuiID ImGui::GetColumnsID(const char* str_id, int columns_count)
 {
     ImGuiWindow* window = GetCurrentWindow();
 
-    // Differentiate column ID with an arbitrary prefix for cases where users name their columns set the same as another widget.
+    // Differentiate column id with an arbitrary prefix for cases where users name their columns set the same as another widget.
     // In addition, when an identifier isn't explicitly provided we include the number of columns in the hash to make it uniquer.
     PushID(0x11223347 + (str_id ? 0 : columns_count));
     ImGuiID id = window->GetID(str_id ? str_id : "columns");
